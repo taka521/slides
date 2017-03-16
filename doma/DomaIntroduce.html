@@ -1,0 +1,915 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>Domaの紹介</title>
+        <meta charset="utf-8">
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+            @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+            @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+            body { 
+                font-family: 'Droid Serif';
+            }
+            h1, h2, h3 {
+                text-align: center;
+                color: #006cb4;
+                font-weight: 700;
+            }
+            .remark-slide-content h1 { font-size: 3em; }
+            .remark-slide-content h2 { font-size: 2em; }
+            .remark-slide-content h3 { font-size: 1.4em; }
+            .footnote {
+                position: absolute;
+                bottom: 1em;
+            }
+            /* リンク */
+            a, a > code , p a{
+                color: #ff1a75;
+                text-decoration: none;
+                font-size: 100%;
+            }
+            /* コード */
+            code {
+                font-family: 'Ubuntu Mono';
+                border-radius: 5px;
+                -web-border-radius: 5px;
+                font-size: 90%
+            }
+            .remark-code, .remark-inline-code {
+                font-size: 85%;
+                color: #660000;
+                font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+                background-color: #eeeeee;
+            }
+            .remark-code-line-highlighted {
+                 background-color: #eeeeee; 
+            }
+            .pull-left {
+                float: left;
+                width: 47%;
+            }
+            .pull-right {
+                float: right;
+                width: 47%;
+            }
+            .pull-right ~ p {
+                clear: both;
+            }
+            /* タイトルページ */
+            .inverse {
+                background: #006cb4;
+                color: #CCC;
+            }
+            .inverse h1, .inverse h2 {
+                color: #f3f3f3;
+                line-height: 1em;
+            }
+            /* 左右二段表示 */
+            .left-column {
+                width: 48%;
+                float: left;
+            }
+            .right-column {
+                width: 48%;
+                float: right;
+            }
+            p , li {
+                font-size: 150%;
+            }
+            /* リスト内のリストは文字を小さく */
+            ul li ul li , ol li ul li{
+                font-size: 75%;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+class: center, middle
+
+# Doma Frameworkの紹介
+
+---
+class: middle
+
+# Agenda
+
+1. Doma Frameworkとは
+1. Domaの特徴
+1. Domaで必要なもの
+ * エンティティクラス
+ * Daoインターフェース
+ * SQLファイル
+1. Domaで作るといいもの
+ * ドメインクラス
+ * エンベッダブルクラス
+1. まとめ
+
+---
+class: middle
+
+# Agenda
+
+1. <strong>Doma Frameworkとは</strong>
+1. Domaの特徴
+1. Domaで必要なもの
+ * エンティティクラス
+ * Daoインターフェース
+ * SQLファイル
+1. Domaで作るといいもの
+ * ドメインクラス
+ * エンベッダブルクラス
+1. まとめ
+ 
+---
+class: center, middle
+
+# Doma Framework とは
+
+---
+class: middle
+
+## Doma Framework とは
+
+DomaはJavaのDBアクセスフレームワークです。 
+
+--
+
+**D**omain **O**riented **Ma**pping Framework を略して**Doma**。  
+（直訳すると、ドメイン指向マッピングフレームワーク）
+
+--
+ 
+Domaには次のような特徴があります。
+
+---
+class: middle
+
+# Agenda
+
+1. ~~Doma Framework とは~~
+1. <strong>Domaの特徴</strong>
+1. Domaで必要なもの
+ * エンティティクラス
+ * Daoインターフェース
+ * SQLファイル
+1. Domaで作るといいもの
+ * ドメインクラス
+ * エンベッダブルクラス
+1. まとめ
+
+---
+class: middle
+
+## Doma の特徴
+
+--
+
+・コンパイル時 にコードの生成やコードの検証を行う。  
+👉 Pluggable Annotation Processing APIを使用。  
+（アノテーション読んで色々やるやつ）
+
+--
+
+・DBのカラムを、好きなクラスにマッピングできる。  
+👉 ドメインクラスのことです。後で説明します。
+
+--
+
+・2Way-SQLを利用できる。  
+👉 作成したSQLテンプレートが、そのまま使えるやつ。
+
+--
+
+・他ライブラリへの依存が一切ない。  
+👉 Domaのjarファイル突っ込むだけで使える！
+
+---
+class: middle
+
+# Agenda
+
+1. ~~Doma Framework とは~~
+1. ~~Doma の特徴~~
+1. <strong>Domaで必要なもの</strong>
+ * エンティティクラス
+ * Daoインターフェース
+ * SQLファイル
+1. Domaで作るといいもの
+ * ドメインクラス
+ * エンベッダブルクラス
+1. まとめ
+
+---
+class: middle
+
+## Doma で必要なもの
+
+---
+class: middle
+
+## Doma で必要なもの
+
+* <strong>エンティティクラス</strong>
+* Daoインターフェース
+* SQLファイル
+
+---
+class: middle
+
+## エンティティクラス
+
+---
+class: middle
+
+## エンティティクラス
+
+DBのテーブルや、クエリの結果をマッピングするためのクラスです。  
+基本的にクラス名がテーブル名、各フィールドがカラム(項目)にあたります。
+
+```java
+class User {
+    public long id;
+    public String name;
+    public String password;
+    public Timestamp createdAt;
+}
+```
+
+---
+class: middle
+
+## エンティティクラス
+
+エンティティクラスは、`@Entity`を注釈します。  
+DBのカラムとエンティティクラスのフィールド名が異なる場合、`naming`属性でネーミング規約を指定できます。（テーブル名にも反映されます）
+
+```Java
+@Entity(naming = NameType.SNAKE_UPPER_CASE)
+class User {
+    @Id
+    public long id;
+    public String name;
+    public String password;
+    public Timestamp createdAt;
+}
+```
+
+上記だと、`createdAt` は `CREATED_AT` カラムにマッピングされます。
+
+---
+class: middle
+
+## エンティティクラス
+
+**〜エンティティクラスのフィールドで使えるデータ型〜**
+
+* プリミティブ型とそのラッパークラス( `char`と`Charactor`は除く）
+* `java.math.BigDecimal`、 `java.math.BigInteger`
+* `java.sql.Date`、`java.sql.Timestamp`
+* `LocalDate`、`LocalTime`、`LocalDateTime`
+* ドメインクラス
+* エンベッダブルクラス
+* 上記の`Optional<T>`型
+
+---
+class: middle
+
+## Domaで必要なもの
+
+* エンティティクラス
+* <strong>Daoインターフェース</strong>
+* SQLファイル
+
+---
+class: middle
+
+## Daoインターフェース
+
+---
+class: middle
+
+## Daoインターフェース
+
+Daoはテーブルにアクセスするためのインターフェースです。  
+作成したInterfaceに`@Dao`を注釈します。
+
+```java
+@Dao
+public interface UserDao {
+    ・・・
+}
+```
+
+DBへのCRUD処理は抽象メソッドを定義し、専用のアノテーションを注釈します。
+
+---
+class: middle
+
+## Daoインターフェース
+
+検索系のメソッドには、`@Select`を注釈します。  
+戻り値には`List<T>`やエンティティクラス、Java8の`Optional`などが指定できます。
+
+```java
+@Select
+List<User> findAll();
+```
+
+```java
+@Select
+User findById(long id);
+```
+
+```java
+@Select
+Optional<User> findById(long id);
+```
+
+---
+class: middle
+
+## Daoインターフェース
+
+また、Java8の `java.util.stream.Stream` や `java.util.Collector` を使用することができます。
+
+```java
+@Select(strategy = SelectType.STREAM)
+<R> R findAll(Function<Stream<User>, R> function); // FunctionにStreamを渡すタイプ
+```
+
+```java
+@Select(strategy = SelectType.STREAM)
+Stream<User> findAll(); // 戻り値にStreamを指定するタイプ
+```
+
+```java
+@Select(strategy = SelectType.COLLECT)
+<R> R findAll(Collector<User, ? , R> collector);
+```
+
+---
+class: middle
+
+## Daoインターフェース
+
+`Stream` や `Collector`を使用することで、戻り値を任意のデータ型に変換できます。
+
+```java
+// <R> R findAll(Function<Stream<User>, R> function);
+int sumId = userDao.findAll(s -> s.mapToInt(u -> u.getId()).sum());
+Optional<User> user = userDao.findAll(s -> s.findFirst());
+```
+
+```java
+// Stream<User> findAll();
+List<String> pwdList = userDao.findAll().map(u -> u.getPassword()).collect(Collectors.toList());
+```
+
+```java
+// <R> R findAll(Collector<User, ? , R> collector);
+List<User> userList = userDao.findAll(Collector.toList());
+```
+
+ただし、戻り値を`Stream`にする場合はリソースをcloseする必要があるため使用する場合には注意しなければいけません。  
+(Java7から導入された `try-with-resources` を使用するといいかも）
+
+---
+class: middle
+
+## Daoインターフェース
+
+更新系メソッドにはそれぞれ`@Update`、`@Insert`、`@Delete`を注釈します。
+
+```java
+@Update
+int update(User user);
+
+@Insert
+int insert(User user);
+
+@Delete
+void delete(long id);
+```
+
+---
+class: middle
+
+## Domaで必要なもの
+
+* エンティティクラス
+* Daoインターフェース
+* <strong>SQLファイル</strong>
+
+---
+class: middle
+
+## SQLファイル
+
+---
+class: middle
+
+## SQLファイル
+
+Domaは**2Way-SQL**と呼ばれる特徴を持ったSQLファイルを使用します。
+
+```java
+@Select
+User findById(long id);
+```
+
+```sql
+SELECT
+    /*%expand*/*
+FROM
+    user
+WHERE
+    id = /* id */0
+```
+
+上記のクエリが発行される時には
+
+```sql
+SELECT id, name, password, created_at FROM user WHERE id = ?
+```
+
+`/* id */` がプレースホルダ `?` に置き換わり、引数の`id`がバインドされます。
+
+---
+class: middle
+
+## SQLファイル
+
+条件によってクエリを動的に組み立てたい場合には、`/*%if 条件式 */ 〜 /*%end*/` を用います。(`/*%else */` や `/*%elseif */` も用意されています。）  
+
+```sql
+SELECT * FROM user
+WHERE
+    /*%if id != null && id >= 10 */
+        id = /* id */0
+    /*%end*/
+    AND name = /* name */'taro'
+```
+
+条件が成り立たない場合、コメント直後の`AND`などは自動的に削除されます。
+
+```sql
+-- idに10以上の値が設定されている場合
+SELECT * FROM user WHERE id = ? AND name = ?
+```
+
+```sql
+-- idがnull、または10未満の値の場合
+SELECT * FROM user WHERE name = ?
+```
+
+---
+class: middle
+
+## SQLファイル
+
+その他、
+
+* コンパイル時に、クエリの妥当性(型)チェック
+* バインド変数のメソッド呼び出し( `/* dto.getXXX() */` 等)
+* 更新カラムの自動展開( `/*%populate*/`)
+* 組み込み関数の利用(`@isEmpty(CharSequence charSequence)`等)
+
+など、便利な機能がDomaには用意されています。
+
+---
+class: middle
+
+# Agenda
+
+1. ~~Doma Frameworkとは~~
+1. ~~Domaの特徴~~
+1. ~~Domaで必要なもの~~
+ * ~~エンティティクラス~~
+ * ~~Daoインターフェース~~
+ * ~~SQLファイル~~
+1. <strong>Domaで作るといいもの</strong>
+ * ドメインクラス
+ * エンベッダブルクラス
+1. まとめ
+
+---
+class: middle
+
+## Domaで作るといいもの
+ 
+---
+class: middle
+
+## Domaで作るといいもの
+
+* <strong>ドメインクラス</strong>
+* エンベッダブルクラス
+
+---
+class: middle
+
+## ドメインクラス
+
+テーブルのカラムを「数値」や「文字列」といった抽象的な型ではなく、「ID」や「名前」といった**具体的な型**として定義したクラスのことです。  
+デザインパターンで言うところの、`ValueObject`パターンがドメインクラスにあたります。
+
+---
+class: middle
+
+## ドメインクラス
+
+例えば、`user` テーブルをJavaのエンティティとして定義する場合、
+
+```sql
+CREATE TABLE user ( id BIGINT PRIMARY KEY, password VARCHAR(128) );
+```
+
+```Java
+@Entity
+class User {
+    public long id;
+    public String password;
+}
+```
+
+という風に、`long` 型や `String` 型で定義するが一般的だと思います。  
+
+---
+class: middle
+
+## ドメインクラス
+
+先の`id`、`password`をドメインクラスに変更してエンティティを定義すると、以下のようになります。
+
+```Java
+@Entity
+class User {
+    public ID id;
+    public Password password;
+}
+```
+
+`long` 型で定義されていた `id` は `ID` 型に、  
+`String` 型で定義されていた `password` は `Password` 型になりました。  
+具体的な型に落とし込むことによるメリットは後ほど説明します。
+
+---
+class: middle
+
+## ドメインクラス
+
+ドメインクラスとしたいクラスに`@Domain`を注釈し、`valueType`属性に基本型を指定します。
+
+```java
+@Domain(valueType = long.class)
+public class ID {
+    private final long value;
+    public ID(final long value){
+        this.value = value;
+    }
+    public long getValue(){
+        return this.value;
+    }
+}
+```
+
+`valueType`属性で指定した基本型を引数に受け取るコンストラクタや、  
+非privateな `getValue()` が定義されていないとコンパイル時にエラーとなります。
+
+---
+class: middle
+
+## ドメインクラス
+
+こんな感じでエラー。
+
+* `valueType` に指定した基本型を引数にとるコンストラクタがない場合
+
+```java
+[DOMA4103] 型[long]をパラメータにもつ非privateなコンストラクタが見つかりません。
+コンストラクタを定義するか、ファクトリメソッドを利用したい場合は@DomainのfactoryMethod属性にメソッド名を指定してください。
+```
+
+* `getValue` が定義されていない場合
+
+```java
+[DOMA4104] アクセッサメソッド[getValue]が見つかりません。
+アクセッサメソッドは、型[long]を戻り値とする非privateで引数なしのインスタンスメソッドでなければいけません。 
+```
+
+---
+class: middle
+
+## ドメインクラスの利点
+ 
+---
+class: middle
+
+## ドメインクラスの利点
+
+先程登場させた`user`テーブルを、ドメインクラスを使用せずにエンティティを定義する場合
+
+```sql
+CREATE TABLE user (
+      id            BIGINT          PRIMARY KEY AUTO_INCREMENT
+    , first_name    VARCHAR(100)    NOT NULL
+    , last_name     VARCHAR(100)    NOT NULL
+    , password      VARCHAR(128)    NOT NULL
+    , created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+    , updated_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+```Java
+@Entity
+public class User {
+	private long id;             // ユーザID
+	private String firstName;    // 名
+	private String lastName      // 姓
+	private String password;     // パスワード
+	private Timestamp createdAt; // 作成日時
+	private Timestamp updatedAt; // 更新日時
+}
+```
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+といったように、各フィールドはプリミティブ型や、そのラッパークラスで定義することになります。  
+一応これでも問題はありませんが、実際にコーディングを行うとリスキーな点が出てきます。
+
+一番発生しやすいのは、項目へのマッピングミスです。  
+あるユーザのパスワードを更新する処理を想定してみます。
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+```Java
+UserDao userDao = new UserDao(); // UserテーブルのDao
+User user = userDao.findById(0); // idが 0 のユーザを検索・取得
+
+user.setPassword("xxxx"); 
+
+Timestamp updateTime =  // 現在日時を取得
+user.setCreatedAt(updateTime); // 更新日時を設定？
+
+userDao.update(user); // ユーザ情報をアップデート
+```
+
+上記では本来 `User#setUpdatedAt` を呼び出して更新日時の設定を行うはずですが、`User#setCreatedAt` を呼び出してしまっています。  
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+原因として考えられるのは、`updatedAt` も `createdAt` も同じ`Timestamp`型であるが故に、
+
+* エディタ（IDEなど）が警告を出してくれなかった。
+* コンパイル時にエラーにならない。
+
+といったことが発生してしまったことではないでしょうか。  
+同一データ型の項目がエンティティ（またはDTO等）クラスに大量に定義されている。というのは割とあるあるだと思います。
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+ここでドメインクラスを用いてエンティティクラスを定義し直すと、
+
+```Java
+@Entity
+public class User {
+	private ID id;               // ユーザID
+	private FirstName firstName; // 名
+	private LastName lastName;   // 姓
+	private Password password;   // パスワード
+	private CreatedAt createdAt; // 作成日時
+	private UpdatedAt updatedAt; // 更新日時
+	
+}
+```
+
+という風になります。  
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+これでどういう利点が生まれるかと言うと、`createdAt` と `updatedAt` は異なるデータ型として定義されているため、
+`CreateAt`型の作成日時に、`UpdateAt`型の値を設定しようとしてもコンパイルエラーが発生し、マッピングミスを早期発見できる点です。
+
+```Java
+UpdatedAt updateTime = new UpdateAt();
+
+user.setCreatedAt(updateTime); // コンパイルエラー!!
+```
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+IDEなどの高機能エディタを使用していなくてもコンパイル時にエラーが発生しますし、
+IDEを使用している場合はIDEが警告メッセージを表示してくれるため、ミスに気付きやすくなります。
+
+（最終的にはコンパイルエラーを解消しないといけない）
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+また、ドメインクラスには型パラメータを指定できます。
+
+```java
+@Domain(valueTpe = long.class)
+public class ID<T> {
+    
+    private final long value;
+    
+    public ID(final long value){
+        this.value = value;
+    }
+    
+    public long getValue(){
+        return this.value;
+    }
+}
+```
+
+この型パラメータは、ドメインクラス内で使用することはほぼありません。
+では、どこでこの型パラメータを使用するかと言うと、エンティティクラスやDaoメソッドです。
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+Daoメソッドを例に挙げてみます。  
+`findById` の引数を `ID<User>` 型として定義します。
+
+```java
+@Dao
+public interface UserDao {
+    @Select
+    User findById(final ID<User> id);
+}
+```
+
+この `findById` には `ID<User>` 型の値しか渡すことができないので、
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+下記のように、`ID<User` 型の値を渡さなければコンパイルエラーが発生します。
+
+```java
+ID<Hoge> id = new ID(0);
+userDao.findById(id); // コンパイルエラー!!
+```
+
+```java
+ID<User> id = new ID(0);
+userDao.findById(id); // これはOK!!
+```
+
+型パラメータを指定していないと、`ID` 型なら何でも渡すことが出来てしまうのでコンパイルエラーが発生しません。
+
+---
+class: middle
+
+## ドメインクラスの利点
+
+ドメインクラスを用いることで、型の恩恵を受けることができます。  
+出来るだけ機械（コンパイラ）にミスを発見してもらうためにも、Domaではドメインクラスを利用することを強くお勧めします。
+
+**静的型付け言語なのに、型を利用しないのは勿体無い！！**
+
+---
+class: middle
+
+## Domaで作るといいもの
+
+* ドメインクラス
+* <strong>エンベッダブルクラス</strong>
+
+---
+class: middle
+
+## エンベッダブルクラス
+
+---
+class: middle
+
+## エンベッダブルクラス
+
+複数のカラムを１つにまとめたクラスを、Domaでは**エンベッダブル（Embeddable）クラス**と呼んでいます。  
+※Embeddable = 埋め込み可能
+
+例えば先程の`user`テーブルのカラム`first_name`と`last_name`を纏めて、  
+論理的に１つの項目とした`full_name`をエンベッダブルクラスとして定義すると以下のようになります。
+
+```Java
+@Enbeddable
+class FullName {
+    private String firstName;
+    private String lastName;
+    
+    public FullName(final String firstName, final String lastName){
+    	this.firstName = firstName;
+    	this.lastName = lastName;
+    }
+}
+```
+
+---
+class: middle
+
+## エンベッダブルクラス
+
+エンベッダブルクラスとしたいクラスには`@Enbeddable`アノテーションを付加します。
+また、永続化の対象となるフィールドを引数に取るコンストラクタの定義が必須となります。
+
+```Java
+@Enbeddable
+class FullName {
+    private String firstName;
+    private String lastName;
+    
+    public FullName(final String firstName, final String lastName){
+    	this.firstName = firstName;
+    	this.lastName = lastName;
+    }
+}
+```
+
+エンベッダブルクラスは、エンティティクラスのフィールドに使用することができます。  
+
+---
+class: middle
+
+# Agenda
+
+1. ~~Doma Frameworkとは~~
+1. ~~Domaの特徴~~
+1. ~~Domaで必要なもの~~
+ * ~~エンティティクラス~~
+ * ~~Daoインターフェース~~
+ * ~~SQLファイル~~
+1. ~~Domaで作るといいもの~~
+ * ~~ドメインクラス~~
+ * ~~エンベッダブルクラス~~
+1. <strong>まとめ</strong>
+
+---
+class: middle
+
+## まとめ
+
+---
+class: middle
+
+## まとめ
+
+* Domaは静的型付け言語の特性を生かしたDBアクセスライブラリ！
+* 依存ライブラリがないよ！！
+* 便利な機能がいっぱい！（コンパイル時の検査、Java8対応など）
+* ドメインクラスを使ってミスを早期発見！
+
+---
+class: middle
+
+# 〜参考〜
+
+* [Welcom to Doma（公式ドキュメント）](http://doma.readthedocs.io/ja/stable/)
+* [domaframework - GitHub](https://github.com/domaframework/doma)
+* [Doma - Domaプロジェクトへようこそ](http://doma.seasar.org/)
+* [Doma実践](http://backpaper0.github.io/ghosts/doma-practice.html#1)
+* [とあるDoma2の使い方](http://gakuzzzz.github.io/slides/doma_practice/#1)
+* [美しき青きDoma！～SQLとIDEが奏でる美しきORマッピング～](http://masatoshitada.hatenadiary.jp/entry/2014/12/10/183155)
+* [Spring Boot + Doma2で2WaySQLを使うまで - Qiita](http://qiita.com/NagaokaKenichi/items/4c680ec9b31725687e04)
+
+---
+class: middle
+
+## ご静聴ありがとうございました。
+## 質問とかあれば。
+
+        </textarea>
+        <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var slideshow = remark.create({
+                ratio: '16:9'
+            });
+        </script>
+    </body>
+</html>
