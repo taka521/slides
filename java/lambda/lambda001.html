@@ -91,6 +91,8 @@ Runnable runnable = new Runnable(){
 };
 ```
 
+上と下は同じ意味（処理）です。
+
 --
 
 ### ラムダ式とは？
@@ -107,8 +109,8 @@ Runnable runnable = new Runnable(){
 
 ### 関数インターフェース
 
-* 抽象メソッドを１つしか定義していないインターフェースのこと。（以上！）
-* 抽象メソッドが１つだけしかないので、<br/>処理側で呼び出すメソッドは一意に決まる。
+* 抽象メソッドを１つしか定義していないインターフェースのこと。
+* **抽象メソッドが１つだけしかないので、<br/>処理側で呼び出すメソッドは一意に決まる。(大事)**
 * `@FunctionalInterface`を注釈することで、コンパイル時に関数インターフェースであるか検査される。
 
 ```java
@@ -117,6 +119,37 @@ public interface SampleFunction {
 	void sampleMethod(); // 抽象メソッドが１つ
 }
 ```
+
+--
+
+* **抽象メソッドが１つだけしかないので、<br/>処理側で呼び出すメソッドは一意に決まる。**
+
+→　どういうことかというと...
+
+--
+
+```java
+// 関数インターフェース
+@FunctionalInterface
+public interface SampleFunction {
+	void sampleMethod();
+}
+```
+
+```java
+// SampleFunction を引数にとるメソッド
+public void sampleStart(SampleFunction function){
+    // 処理...
+    // この中で function.sampleMethod() を呼び出す。
+}
+```
+
+
+* あるメソッドの引数に関数インターフェース型が指定されている場合、そのメソッド内で `sampleMethod` が呼び出されることは自明。
+* であると同時に抽象メソッドの、**戻り値の型** や **引数の型** 等も自明。
+
+→ ラムダ式はこれら **自明な部分を省略する** ためのもの。
+
 
 --
 
@@ -164,22 +197,114 @@ this.setCalculation(new Calculatable(){
 });
 ```
 
+<small>※性能は無視してます。</small>
+
 --
 
 ### ラムダ式 -基本形-
 
-1. `setCalculation`メソッドから引数の型(インターフェース）が推論できるため、省略可能。
+1. `setCalculation`メソッドから引数の型が推論できるため、引数の型を省略可能。
 1. 実装するメソッドと戻り値も一意に決まるため、省略可能。
 1. 引数と処理の間に「->」追加
 
+→ 順番に適用させていきます。
+
+--
+
+* `setCalculation`メソッドから引数の型(インターフェース）が推論できるため、引数の型を省略可能。
+
 ```java
-// ラムダ式の基本形
+this.setCalculation(new Calculatable(){
+	public Integer calc(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+});
+```
+
+↓
+
+```java
+this.setCalculation(
+	public Integer calc(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+);
+```
+
+→ 【NEXT】実装するメソッドと戻り値も一意に決まるため、省略可能。
+
+--
+
+* 実装するメソッドと戻り値も一意に決まるため、省略可能。
+
+```java
+this.setCalculation(
+	public Integer calc(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+);
+```
+
+↓
+
+```java
+this.setCalculation(
+	(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+);
+```
+
+→ 【NEXT】引数と処理の間に「->」追加
+
+--
+
+* 引数と処理の間に「->」追加
+
+```java
+this.setCalculation(
+	(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+);
+```
+
+↓
+
+```java
 this.setCalculation(
 	(Integer value1, Integer value2) -> {
 		return value1 + value2;
 	}
 );
 ```
+
+→ 最初と見比べてみると...
+
+--
+
+```java
+// Calculatableを実装する側（匿名クラスで実装）
+
+this.setCalculation(new Calculatable(){
+	public Integer calc(Integer value1, Integer value2){
+		return value1 + value2;
+	}
+});
+```
+
+↓
+
+```java
+this.setCalculation(
+	(Integer value1, Integer value2) -> {
+		return value1 + value2;
+	}
+);
+```
+
+かなりスッキリ！<br/>
+引数の数値同士を足す、という処理が分かり易くなったと思いませんか？
 
 --
 
@@ -246,13 +371,13 @@ value1 -> value1 * 2;
 ### Streamとは？
 
 * Java8で追加された、拡張Iteratorのようなもの。
-* 複数のオブジェクト（要素）に対し、何らかの処理（変換や計算など）を行うことに特化している。
+* オブジェクト（要素）の集合に対し、何らかの処理（変換や計算など）を順に適用させることに特化している。
 * ラムダ式と併せて使用することで、簡潔で読み易いコードを書くことが出来る。
 
 ```java
 Stream.of("one", "two", "three")
-    .filter(value -> value.length() <= 3)         // 長さが3以下の文字列を
-    .map(s -> s.length())                                 // 文字列長（数値）に変換して
+    .filter(value -> value.length() <= 3) // 長さが3以下の文字列を
+    .map(s -> s.length()) // 文字列長（数値）に変換して
     .forEach(strLen -> System.out.print(strLen)); // 順番に出力する。
 ```
 
@@ -321,15 +446,14 @@ studentList.stream()  // 生徒(Student）のListから
 ### ラムダ式を使用する場合
 
 ```java
-studentList.stream()                                         // 生徒(Student）のListから
-	.filter(student -> student.age >= 11)          // 11歳以上の生徒を抽出し
+studentList.stream()  // 生徒(Student）のListから
+	.filter(student -> student.age >= 11)  // 11歳以上の生徒を抽出し
 	.sorted((o1, o2) -> o1.height - o2.height)  // 身長の昇順でソートした後に
-	.map(s -> s.name)                                          // 氏名の
-	.collect(Collectors.toList());                         // Listを作成する
+	.map(s -> s.name)  // 氏名の
+	.collect(Collectors.toList());  // Listを作成する
 ```
 
 ５行で終わり。ね？簡単でしょ？
-
 
 ---
 
