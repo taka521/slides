@@ -1,0 +1,1264 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>JavaDayTokyo2017レポート</title>
+        <meta charset="utf-8">
+        <style>
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+            @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+            @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+            body { 
+                font-family: 'Droid Serif';
+            }
+            h1, h2, h3 {
+                text-align: center;
+                color: #006cb4;
+                font-weight: 700;
+            }
+            .remark-slide-content h1 { font-size: 3em; }
+            .remark-slide-content h2 { font-size: 2em; }
+            .remark-slide-content h3 { font-size: 1.4em; }
+            .footnote {
+                position: absolute;
+                bottom: 1em;
+            }
+            
+            /* リンク */
+            a, a > code , p a{
+                color: #ff1a75;
+                text-decoration: none;
+                font-size: 100%;
+            }
+            /* コード */
+            code {
+                font-family: 'Ubuntu Mono';
+                border-radius: 5px;
+                -web-border-radius: 5px;
+                font-size: 90%
+            }
+            .remark-code, .remark-inline-code {
+                font-size: 85%;
+                color: #660000;
+                font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+                background-color: #eeeeee;
+            }
+            .remark-code-line-highlighted {
+                 background-color: #eeeeee; 
+            }
+            .pull-left {
+                float: left;
+                width: 47%;
+            }
+            .pull-right {
+                float: right;
+                width: 47%;
+            }
+            .pull-right ~ p {
+                clear: both;
+            }
+            /* タイトルページ */
+            .inverse {
+                background: #006cb4;
+                color: #CCC;
+            }
+            .inverse h1, .inverse h2 {
+                color: #f3f3f3;
+                line-height: 1em;
+            }
+            /* 左右二段表示 */
+            .left-column {
+                width: 48%;
+                float: left;
+            }
+            .right-column {
+                width: 48%;
+                float: right;
+            }
+            p , li {
+                font-size: 110%;
+            }
+            /* リスト内のリストは文字を小さく */
+            ul li ul li , ol li ul li{
+                font-size: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+class: center, middle
+# Java Day Tokyo 2017 参加レポート
+
+2017/07/29（土）<br/>
+社内勉強会
+
+---
+class: middle
+
+# Agenda
+
+* Java Day Tokyo とは
+* 参加セッション
+ * 基調講演
+ * Modular Development with JDK9
+ * Introducation to JShell: Offical REPL Tool for Java Platform
+ * JavaSE9のすすめ
+ * Spring Framework 5.0によるReactive Web Application
+* 感想
+
+???
+
+```
+各セッションの資料などは、各セッションの説明後にリンクを貼っています。
+気になった人は後で御覧ください。
+```
+
+---
+class: middle
+
+# Agenda
+
+* **Java Day Tokyo とは**
+* 参加セッション
+ * 基調講演
+ * Modular Development with JDK9
+ * Introducation to JShell: Offical REPL Tool for Java Platform
+ * JavaSE9のすすめ
+ * Spring Framework 5.0によるReactive Web Application
+* 感想
+
+---
+class: middle
+
+# Java Day Tokyo とは
+
+<center><img src="https://pbs.twimg.com/media/C__adv_UIAA3Gx7.jpg" width="720" /></center>
+
+???
+
+```text
+画像は、今年のJava Day Tokyoの様子です。
+```
+
+---
+class: middle
+
+# Java Day Tokyo とは
+
+* 年1回開催されている、日本Oracle主催のJavaカンファレンス。（今年で5年目）
+* 多分、国内で最大のJavaカンファレンス。
+* 今年は、2017年5月17日（水）に開催されました。
+* 国内だけでなく国外からもスピーカーが参加。
+* 今年は全部で35セッション。
+* 初級者向けのセッションもある。
+
+[Java Day Tokyo 2017 公式サイト](http://www.oracle.co.jp/events/javaday/2017/) <br/>
+[資料一覧](http://www.oracle.com/technetwork/jp/ondemand/online2017-javaday-3719599-ja.html)
+
+???
+
+```text
+この規模のカンファレンスを開催できて、かつ参加無料なのは凄い...。
+
+ざっと1500人は居た気がする。（それ以上だったかも）
+参加者は新人っぽい方から、高齢の方まで幅広い年齢層だった。
+（新人っぽい人達は結構多かった）
+```
+
+---
+class: middle
+
+# Agenda
+
+* ~~Java Day Tokyo とは~~
+* **参加セッション**
+ * 基調講演
+ * Modular Development with JDK9
+ * Introducation to JShell: Offical REPL Tool for Java Platform
+ * JavaSE9のすすめ
+ * Spring Framework 5.0によるReactive Web Application
+* 感想
+
+---
+class: middle
+
+# 参加セッション
+
+--
+
+* 基調講演
+* Modular Development with JDK9
+* Introducation to JShell: Offical REPL Tool for Java Platform
+* JavaSE9のすすめ
+* Spring Framework 5.0によるReactive Web Application
+
+???
+
+```text
+全部で５セッションに参加。
+Java9に関するセッションが4つ、Javaに関連するセッションが1つ。
+```
+
+---
+
+## 参加したかったセッション
+
+* 緊急開催！Java技術メモ三銃士が語るエンジニア道
+
+Java技術メモ三銃士（かずひらさん、opengl-8080さん、ひしだまさん）による、パネルディスカッション。<br/>
+
+* 何故、技術メモを書き始めたのか？
+* 技術メモをやっていてよかったこと
+* エンジニアとして成長し続けていくためにはどうすればいいか
+
+等の質問に答えていくセッションだったらしいです。
+
+???
+
+```
+参加したかったけど、参加できなかったのがこのセッション。
+SpringFrameworkのセッションと重なってたので諦めた。
+
+Javaやったことある人なら、ひしだまさんのサイトは見たことあるはず。（灰色のサイト）
+
+
+なお、最後の質問に対してかずひらさんは
+
+  「勉強を止めたらエンジニアとして終わり」（要約）
+
+との回答だったらしい。
+（なので勉強しましょう...。）
+```
+
+---
+class: middle
+
+# 参加セッション
+
+* 基調講演
+* Modular Development with JDK9
+* Introducation to JShell: Offical REPL Tool for Java Platform
+* JavaSE9のすすめ
+* Spring Framework 5.0によるReactive Web Application
+
+???
+
+```text
+参加したセッションをザックリと紹介していきます。
+まずは基調講演から。
+```
+
+---
+class: middle
+
+# 参加セッション
+
+* **基調講演**
+* Modular Development with JDK9
+* Introducation to JShell: Offical REPL Tool for Java Platform
+* JavaSE9のすすめ
+* Spring Framework 5.0によるReactive Web Application
+
+---
+class: middle
+
+## 基調講演
+
+#### 〜概要（Java Day Tokyo 2017 の公式ページより引用）〜
+
+> いよいよJava SE 9とJava EE 8のリリースが近づいてきました！
+> 今回のJava Day Tokyoの基調講演は、Java SE、Java EEそれぞれの開発部門のVice Presidentが、直接みなさまへ新バージョンの価値をご紹介します。
+> 新バージョンの注目すべきポイント、さらにその先に何があるのかを、ぜひみなさまご自身でお確かめください。ご参加をお待ちしています。
+
+---
+class: middle
+
+## 基調講演
+
+* Javaの現在と未来について。
+ * クラウド（AWS等）の基盤はJavaであり、今後も重要性が増す。
+ * Docker社とのパートナシップを結んだ。
+ * OpenJDKに参加してほしい。<br/>
+ （メーリングリストに登録するだけでもOK。ただし英語...。）
+ * JavaSE9やJavaEE8の紹介
+ * Javaの導入・活用事例の紹介
+
+???
+
+```text
+日本OracleのCEOが登壇。
+
+午前中は２時間みっちり基調講演でした。
+
+```
+
+---
+class: middle
+
+## 基調講演
+
+* 次期プロジェクトについて
+ * Project Valhalla
+ * Project Panama
+
+```java
+// Project Valhalla
+__ByValue class MyValue {} // ユーザ定義可能な基本型
+List<int> intList = // 基本型をジェネリクスに指定
+```
+
+???
+
+```
+・Project Valhalla
+
+　　詳しくは知らないが、プログラマが値クラスを定義できるようになったり。
+　　プリミティブ型をジェネリクスに指定できるようになるらしい。
+
+・Project Panama
+
+　　ビッグデータ向けのプロジェクト。これ以上は分からぬ...。
+
+```
+
+---
+class: middle
+
+## 基調講演 
+
+* 日本Javaユーザグループ(JJUG）の紹介
+ * 今年で10年目のJavaコミュニティ。
+ * メンバー数は約6600人。
+ * 年２回のカンファレンス(JJUG CCC)と、月１回の勉強会(JJUC ナイトセミナー）を開催。
+ * どっちも参加費なし。
+
+???
+
+```text
+年2回開催されているカンファレンスが 「JJUG CCC」というもので、春と秋に開催。
+※CCC …　クロス・コミュニティ・カンファレンスの略。
+参加費は無料で懇親会もあり。（今年はLINE社から回転寿司が振る舞われたそうで）
+
+実は、このJava Day Tokyoの開催週の土曜日がその日だった。（午前中だけ参加してきた）
+
+月１の勉強会は「JJUG ナイトセミナー」。
+最近だと7/26に、O/Rマッパーの勉強会が開催された。
+```
+
+---
+class: middle
+
+## 基調講演
+
+### セッション動画
+
+* [Java Day Tokyo 2017 基調講演 - YouTube](https://www.youtube.com/watch?v=OIv_k5vKfH0&feature=youtu.be)
+
+---
+class: middle
+
+# 参加セッション
+
+* ~~基調講演~~
+* **Modular Development with JDK9**
+* Introducation to JShell: Offical REPL Tool for Java Platform
+* JavaSE9のすすめ
+* Spring Framework 5.0によるReactive Web Application
+
+???
+
+```text
+
+次はJava9で導入されるモジュールシステムについてのセッションについて。
+
+```
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+#### 〜概要（Java Day Tokyo 2017 の公式ページより引用）〜
+
+> モジュラー開発スタイルは全てのJava開発者（あなたのアプリケーションがたった１つのJARであっても100個のJARであっても）にメリットがあります。
+> 本セッションでは内部APIを強力に保護しながら数十の再利用可能なモジュールとしてJDKを構造化したJava 9のモジュールシステムを紹介します。 
+> そして、セッションではモジュールをどのようにして作成するか、一般的に利用されているライブラリ潜むJDKの内部APIへの依存の回避をどのように行うかについて解説します。
+> 最後に、モジュールのために用意されたツール群について説明します。
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+* Java9から導入される、Module Systemについて。
+ * Project Jigsawというプロジェクト名。
+* Javaプログラム = パッケージの集合。
+* このパッケージの集合を **モジュール** という単位で扱い、管理するというもの。
+* どう管理するかは `module-info.java` というファイルに定義する。
+
+```java
+module com.module {
+    requires java.base;       // 依存するモジュール
+    exports  com.module.hoge; // 公開するパッケージ
+}
+```
+
+`module-info.java` の作り方とかは後ほど説明します。<br/>
+で、モジュールシステムの導入によるメリットは...
+
+???
+
+```text
+現在はパッケージに対して可視性は定義できない。
+そのため、クラスがpublicであればどこからでもアクセス（import）できてしまう。
+
+例えば、「外部から使用される想定のクラス」と「内部でのみ使用される想定のクラス」が
+同一パッケージに入っている場合であれば、「内部でのみ使用される想定のクラス」の可視性を
+private か パッケージプライベート にすればいい。
+
+しかし、「内部でのみ使用される想定のクラス」を別パッケージに分割するとなった場合に、
+「内部でのみ使用される想定のクラス」の可視性を public にせざるを得なくなる。
+
+こうなってしまうと例え「内部でのみ使用される想定のクラス」であっても、
+外部から使用（import）可能になってしまう。（内部でしか使用しないユーティリティーとかも）
+
+
+このような問題を解決するために モジュールシステム が導入される。
+パッケージごとに可視性を定義することで、問題の解決を図る。（次ページへ）
+
+```
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+モジュールシステムの導入によって以下のようなメリットがある。
+
+* **アーカイブ（jar化）した時にサイズが減る & リソースの節約**
+
+ * jar単位のアーカイブから、モジュール単位のアーカイブになる。
+ * そのため不要なモジュールは同梱されず、ファイルサイズが減る。
+ * 結果的にロードするクラスが減るため、リソースの節約になる。
+
+--
+
+* **セキュアになる。**
+ * パッケージに対して可視性を設定できるので、外部利用が想定されていないクラスの使用を抑止できる。
+
+--
+
+* **jarの欠落を静的に検知できる。**
+ * 依存関係を `module-info.java` から辿ることができ、静的なチェックが可能になる。
+ * もしモジュールが不足していればコンパイルエラーとなる。
+
+???
+
+```
+今は、jarの依存関係をコンパイラーがチェックできない。
+あくまで、作成したプログラムを基準として、必要となるjarがクラスパスに追加されているかを見るだけ。
+
+そしてそのjarが、別のjarに依存している場合、
+そのjarをクラスパスに通さなくてもコンパイルが通ってしまう。
+で、実行時エラーになって初めてjarの欠落に気がつく。（本番稼働してたら目も当てられない）
+
+Javaは「不具合はコンパイル時に検知する」思想だが、このクラスパス問題は思想に反する。
+ということで、モジュールシステムの導入で解決を図った。
+```
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+### 〜`module-info.java` の作成方法〜
+
+`module-info.java` というファイル名で、パッケージのトップレベルに1つ作成します。<br/>
+基本的な `module-info.java` は以下になります。
+
+```java
+module [モジュール名] {
+    exports: [公開するパッケージ];
+    requires: [依存するモジュール名];   
+}
+```
+
+```java
+module com.hello {            // com.hello というモジュール名
+    exports: com.hello.xxxxx; // com.hello.xxxxx パッケージを公開する
+    exports: com.hello.yyyyy; // com.hello.yyyyy パッケージを公開する
+    requires: java.base;      // 依存するモジュールは java.base
+}
+```
+
+???
+
+```
+ちなみに、トップレベルに作成しなくてもコンパイルは通るが、
+コンパイラに「トップレベルに置け」と警告される。
+
+
+公開するパッケージ複数記載する場合には、exports句を公開パッケージ分記載する。
+依存モジュールが複数ある場合も同様。
+
+また、「xxxのパッケージはこのモジュールにしか公開させない」といった
+細かい設定も可能になっている。（詳しくは調べてくだちぃ）
+
+
+requires句に記載するのはモジュール名なので、
+依存先のライブラリはモジュール化に対応している必要がある。
+```
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+**Q. 既存ライブラリや3rdパーティー製のライブラリがモジュール化に対応していない場合はどうするの？**
+
+--
+
+### A. Automatic Modulesを利用する。
+
+既存のjarを自動的にモジュール化してくれる、**Automatic Modules** という機能がある。
+モジュール化に対応していない3rdパーティー製のライブラリ等は、それで対応させる。
+（Automatic Modulesでモジュール化された場合、全てのパッケージが公開される）
+
+```java
+module jigsaw.demo.app {
+    exports jigsaw.demo.app.domain;
+    requires eclipse.collections;   // eclipse-collections-8.1.0.jar
+    requires commons.lang3;         // commons-lang3-3.5.jar
+}
+```
+
+???
+
+```
+Automatic Modulesを使用する場合のモジュール名は、jarファイル名から変換する。
+
+Automatic Modulesの利用方法はセッション内で解説がなかったので
+自分で調べてみたが、バージョン情報は含めないっぽい。（まぁ、そりゃそうか）
+
+Automatic Modules でモジュール化されたものは、
+パッケージの可視性が全てpublicなので、セキュリティ的にはよろしくない。
+```
+
+---
+class: middle
+
+## Modular Development with JDK9
+
+### セッション動画 & 資料
+
+* [Modular Development with JDK 9 - YouTube](https://www.youtube.com/watch?v=jWTWog5YWng&feature=youtu.be)
+* [Modular Development with JDK 9 - PDF](http://otndnld.oracle.co.jp/ondemand/javaday2017/D1-A2_JavaDayTokyo2017)
+
+---
+class: middle
+
+# 参加セッション
+
+* ~~基調講演~~
+* ~~Modular Development with JDK9~~
+* **Introducation to JShell: Offical REPL Tool for Java Platform**
+* JavaSE9のすすめ
+* Spring Framework 5.0によるReactive Web Application
+
+---
+class: middle
+
+## Introducation to JShell: Offical REPL Tool for Java Platform
+
+#### 〜概要（Java Day Tokyo 2017 の公式ページより引用）〜
+
+```text
+REPL(Read-Eval-Print Loop) ツールをご存知でしょうか？ 
+式や文を一行づつ実行し、直ぐに実行結果を確認できるツールのことです。
+REPLツールはRubyやPython などのスクリプト系の言語環境では当たり前のツールです。
+ScalaやKotlinなどのJVM 言語でもREPLを備えています。
+
+OpenJDK (Java9)ではJava言語のREPL ツールであるjshellが実装され、利用できるようになります。
+jshellを使えば、
+
+  public class Hoge {
+      public static void main(String[] args){}
+  }
+
+を書かずとも、Java言語のコードを実行できるのです。
+jshellを用いるとAPIや言語構文などの挙動の検証、確認が簡単にできるので、
+ソフトウェア開発全体の効率が向上します。
+また、jshellを用いると実行結果がすぐに分かるためプログラマの教育にも有用です。
+
+本セッションでは、デモを交えてjshellの使い方を紹介します。
+また、どのようにしてREPL機能が実現されているのかというjshellの裏側もお伝えします。
+```
+
+???
+
+```
+5月の勉強会で取り上げられてたテーマなので、軽く流して終わる。
+「JavaのREPL」以上の情報は必要ないかな、という印象。
+```
+
+
+---
+class: middle
+
+## Introducation to JShell: Offical REPL Tool for Java Platform
+
+* セッションはJava製のREPLについてのお話し。
+* JShellの使い方。（起動〜使用方法など）
+* JShellの仕組み。（裏でJVMが立ち上がって、API介して実行してる）
+* カスタマイズが可能。（オレオレJShell）
+ * インポート定義を外部ファイルに。
+ * Mavenリポジトリからjar落としてきたり。
+
+```bash
+$ jshell
+jshell> System.out.println("Hello World")
+Hello World
+```
+
+???
+
+```
+気軽にJavaが書けるようになったので、
+気になった人はJava9インストールしてみて。（EA版配信中）
+```
+
+---
+class: middle
+
+## Introducation to JShell: Offical REPL Tool for Java Platform
+
+### セッション資料
+
+* [Introduction to JShell - SlideShare](https://www.slideshare.net/bitter_fox/introduction-to-jshell-official-repl-tool-for-java-platform-javadaytokyo-2017-jdt2017-jdtjshell)
+
+---
+class: middle
+
+# 参加セッション
+
+* ~~基調講演~~
+* ~~Modular Development with JDK9~~
+* ~~Introducation to JShell: Offical REPL Tool for Java Platform~~
+* **JavaSE9のすすめ**
+* Spring Framework 5.0によるReactive Web Application
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+#### 〜概要（Java Day Tokyo 2017の公式ページより引用）〜
+
+> Java SE 9というと、Project JigsawやJShellを思い浮かべるかもしれません。<br/>
+> しかし、Java SE 9はそれだけではありません。<br/>
+> Java SEの機能追加を定めるJEPの数は89もあります。
+> 
+> 本セッションでは、Java SE 9の多くの新機能の中から言語仕様の変更や、コアライブラリの変更点、
+> また互換性に問題がある点などについて実例と共に解説します。
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+* Java9で変わる、言語仕様周りの話がメイン。
+* Jigsaw や JShell 以外の話。
+* セッションの流れは以下の順番。
+ * Compatibility（互換性）
+ * Brand new（新機能）
+ * Update（変更）
+
+個人的に気になったものをいくつかご紹介します。
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Compatibility（互換性）
+
+--
+
+* 「`_`」単体の使用は禁止。（Java8では警告が出る）
+
+ * `int _ = 1;` とかはコンパイルエラーに。
+
+???
+
+```
+他言語（Scalaとか）は、「_」単体でも使用できる。
+「_」は特殊な意味を持つ場合が多いので、誤解を招かないよう禁止になった？
+```
+
+--
+
+* libディレクトリにjarを突っ込むとクラスパスに自動追加してくれる機能がなくなった。
+
+ * `module-info.java` に依存するモジュールを明記する！
+
+???
+
+```
+libディレクトリにjar突っ込むと、自動的にクラスパスに追加してくれるのは楽だった...。
+```
+
+--
+ 
+* GCがG1GCデフォルトに。
+
+ * 従来はパラレルGC。
+ * <small>正直良くわかってない</small>
+
+???
+
+```
+GCに関しては全然知識ないので、パス。
+なんか、Java9の情報漁ると結構触れられてるので大きめの変更っぽい？
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Brand new（新機能）
+
+--
+
+* `Reative Streams` 対応のためのAPIを提供
+ * `Reative Streams` は非同期ストリーム（データ）処理を行うための標準仕様。（Publish/Subscribe + Back Pressure）
+ * リアクティブプログラミングの一種。
+ * Java9ではインターフェースだけ提供。
+ * `java.util.conccurent.Flow.Publisher`
+ * `java.util.conccurent.Flow.Subscriber`
+ * `java.util.conccurent.Flow.Subscription`
+
+Reactive Streams については [このスライド](https://speakerdeck.com/okapies/reactive-streams-ru-men-number-jjug) が分かりやすいです。<br/>
+
+???
+
+```
+Reactive Streamsやリアクティブプログラミングについて話すと長くなるので、
+今回は話さない。（自分がなんとなくしか理解していないってのが大きいけど）
+
+Publish-Subscribeパターンの応用になる。（Observerパターンの強いやつ）
+
+Java9で追加されるAPIは基本的にこの３つ。
++ Processor という、Publisher と Subscriber を継承したインターフェースもある。
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Update（変更）
+
+--
+
+* Stream に `iterate(seed, hasNext, next)` メソッドが追加。
+ * 有限ストリームの生成が可能に。
+ * 従来は無限ストリームの生成のみで、`limit` メソッドで数を制限していた。
+ * 「ある条件に一致する間だけデータを生成したい」ケースに対応。
+
+```java
+// Java8まで（Streamが2回生成される）
+Stream.iterate(0, i -> i + 1).limit(10);
+```
+
+```java
+// Java9では（Streamの生成は1回）
+Stream.iterate(0, i -> i < 10, i -> i + 1);
+```
+
+???
+
+```
+単純に「連番をn個生成したい場合」などであれば、limitメソッドによる件数制限でもいい。
+が、「ある条件に一致する間だけ、データを生成したい」となれば話は別。
+
+Java8の場合だと、Streamではなくfor文で処理する必要がある。
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Update（変更）
+
+* Streamに `takeWhile` メソッドが追加。
+ * 「条件に一致する間」先頭から要素を取得するメソッド。
+ * 一致しなくなったら、例え条件に一致する要素が後ろにあっても取得しない。
+ * `filter` メソッドは、「条件に一致する要素」を抽出するメソッド。（全要素が対象）
+
+```java
+// d が出てくるまでの要素を取得して、出力
+Stream.of("a", "b", "c", "d", "e")
+      .takeWhile(s -> !"d".equals(s))
+      .forEach(System.out::println);
+```
+
+```java
+// Java8で同じことをする場合
+List<String> list = Arrays.asList("a", "b", "c", "d", "e");
+for(String s : list) {
+    if("e".equals(s)) break;
+    System.out.println(s);
+}
+```
+
+???
+
+```
+Java8には「条件に一致するまでxxxする」というメソッドがなかったため、
+Streamを使用せずに、普通にfor文で処理するしかなかった。
+
+が、Java9では takeWhile / dropWhile メソッドが追加されたことで、
+Stream のまま処理を行えるようになった。
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Update（変更）
+
+* CollectionにFactory Methodが追加された。
+ * `List.of`, `Map.of`, `Set.of`
+ * コレクションの初期化が簡略化された!!
+ * **ただし、作成されるのは不変コレクション**
+ * なので、破壊的（要素の変更）メソッドを呼ぶとExceptionが発生する。(`add`, `remove`, `clear` 等）
+
+```java
+// Java9から
+List<String> list = List.of("A", "B", "C");
+Set<String> set = Set.of("E", "F", "G");
+Map<Integer, String> map = Map.of(0, "zero", 1, "one");
+
+list.add("D"); // UnsupportedOperationExceptionがスロー!!
+```
+
+```java
+// Arrays.asList の罠と一緒!! 実装を気にしなきゃいけない...
+Arrays.asList(1, 2, 3).add(4); // UnsupportedOperationException
+```
+
+???
+
+```
+やっとコレクションにファクトリメソッドが追加された。
+便利になったとは思うが、個人的にはあんまり嬉しくない。
+
+というのも、コレクション系のインターフェースは要素の変更が想定されているもの。
+しかし、今回追加されたファクトリメソッドで作成されるのは、不変コレクション。
+
+「普通のListと思ったら、不変だった！！」なんてことが普通にありえる。
+抽象化してるのに実装を気にしなきゃいけないなんて....。
+
+
+Guava や Eclipse Collections 等のライブラリで
+ファクトリメソッドを提供しているので、そこまでの旨味は無いという感想。
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### Update（変更）
+
+* **javadocがHTML5に対応 & 検索可能に**
+
+### <img src=./img/java9_javadoc.png width=680px />
+
+???
+
+```
+javadocに検索機能ついたのは嬉しい。
+今まではクラス名の一覧を先頭からスクロールして探すしかなかった...。
+
+
+他の変更点もあるので、気になったらスライド見てね。
+Stringの文字列を保持するのが char[] -> byte[] に変更、とか。
+```
+
+---
+class: middle
+
+## JavaSE9のすすめ
+
+### セッション資料
+
+* [JavaSE9のすすめ](http://otndnld.oracle.co.jp/ondemand/javaday2017/D1-A4_JavaDayTokyo2017)
+
+---
+class: middle
+
+# 参加セッション
+
+* ~~基調講演~~
+* ~~Modular Development with JDK9~~
+* ~~Introducation to JShell: Offical REPL Tool for Java Platform~~
+* ~~JavaSE9のすすめ~~
+* **Spring Framework 5.0によるReactive Web Application**
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+〜概要〜
+
+> Spring Framework 5.0の目玉機能としてReactiveプログラミング対応が加わり、Spring WebFluxという新しいWebフレームワーク及びランタイムが追加されます。
+> 本セッションでは、Reactive対応の背景とReactive Streams/Project Reactorの説明から入り、Spring Boot 2.0を交えたSpring WebFluxの使い方をコード例を中心にご紹介します。
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+〜セッションの流れ〜
+
+* リアクティブとは？
+* Reactive Streamsとは？
+* Spring5で提供されるライブラリ `Spring Web Flux` について。
+* `Spring Web Flux` のデモ。
+
+---
+class: middle
+
+### リアクティブとは？
+
+> "In a nutshell reactive programming is about **<u>non-blocking</u>**, 
+> **<u>event-driven</u>** applications that scale with <u>a small number of 
+> threads</u> with **<u>backpressure</u>** as a key ingredient that remains
+> to ensure producers do not overwhelm consumers"<br/> - Rossen Stoyanchev
+
+反作用プログラミングとは、生産者が消費者を圧倒しないようにするために、
+<u>**バックプレッシャー**</u>を重要な要素とする<u>少数のスレッドでスケーリング</u>する
+<u>**ノンブロッキング**</u>の<u>**イベント駆動型**</u>アプリケーションです。
+
+#### 種類
+<table border=1>
+  <tr>
+    <th>同期/非同期</th><th>ブロッキング/ノンブロッキング</th><th>備考</th>
+  </tr>
+  <tr>
+    <td>同期</td><td>ブロッキング</td><td>メインスレッドのみ。</td>
+  </tr>
+  <tr>
+    <td>非同期</td><td>ブロッキング</td><td>マルチスレッド。JavaのWebアプリケーション（Servlet）はこれが主流。</td>
+  </tr>
+  <tr>
+    <td>非同期</td><td>ノンブロッキング</td><td>イベントループ。リアクティブはこれ。</td>
+  </tr>
+</table>
+
+???
+
+```
+下の表は種類。
+
+同期&ブロッキングは、簡単に言えばシングルスレッドで動くプログラム。
+同時リクエストを捌けない。
+
+２番目は従来のJava製のWebアプリケーション。
+１リクエストに対して、１スレッドを割り当てるタイプ。
+スレッド数が上限に達すると、待ちが発生する。（Tomcatはこれ）
+
+３番目が非同期且つ、ノンブロッキング。
+I/Oの待ち時間を有効利用できる。
+
+
+バックプレッシャーについて後で説明。
+```
+
+---
+class: middel
+
+### What is Reactive Streams?
+
+> Reactive Streams is an initiative to provide a standard for asynchronous stream processing with non-blocking back pressure. 
+> This encompasses efforts aimed at runtime environments (JVM and JavaScript) as well as network protocols.
+
+> リアクティブ・ストリームは非ブロッキング・バック・プレッシャーを持つ非同期ストリーム処理の標準を提供するイニシアチブです。
+> これには、実行時環境（JVMとJavaScript）とネットワークプロトコルを対象とした取り組みが含まれます。
+
+* **"バックプレッシャー付きの非同期ストリーム処理の標準"** を定める仕様のこと。
+
+<center>
+  <table width=600px>
+    <tr>
+      <td align="center"><img src=./img/rx_java.png height=120px /></td>
+      <td align="center"><img src=./img/reactor.png height=120px /></td>
+      <td align="center"><img src=./img/akka_streams.png height=120px /></td>
+    </tr>
+    <tr>
+      <td align="center">RxJava2</td>
+      <td align="center">Reactor</td>
+      <td align="center">Akka Streams</td>
+    </tr>
+  </table>
+</center>
+
+???
+
+```
+Reactive Streamsに準拠したライブラリは、RxJava2, Reactor, Akka Streams 等がある。
+
+```
+
+---
+class: middle
+
+### What is Reactive Streams?
+
+Reactive Streamsは４つのinterfaceを提供している。
+
+```java
+public interface Publisher<T> {
+    void subscribe(Subscriber<? super T> s);
+}
+public interface Subscription {
+     void request(long n);
+     void cancel();
+}
+public interface Subscriber<T> {
+    void onSubscribe(Subscription s);
+    void onNext(T t);
+    void onError(Throwable t);
+    void onComplete();
+}
+public interface Processer<T, R> 
+    extends Publisher<T>, Subscriber<R>{}
+```
+
+`Publish/Subscrib` パターンを応用している。<br/>
+データの生成と通知のためのデザインパターンの１種。
+
+---
+class: middle
+
+### What is Reactive Streams?
+
+Reactive Streamsのデータフロー
+
+<img src=./img/data_flow.png width=750px/>
+
+1. `Publisher` に `Subscriber` を登録する。
+1. `Subscriber` は処理できるデータ数を通知。
+1. `Publisher` はリクエストされたデータ数を通知する。
+
+この **処理可能なデータ量を制御する仕組み** が **バックプレッシャー**。<br/>
+セッションでは、バルブに例えられていた。
+
+???
+
+```
+
+
+```
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+Spring Framework5で `Reactive Streams` に対応した、`Spring Web Flux` が提供されます。
+詳細は **[公式サイト](http://docs.spring.io/spring/docs/5.0.0.BUILD-SNAPSHOT/spring-framework-reference/web.html#web-reactive)** を見てください。
+
+<center><img src=./img/springwebflux.png width=680px /></center>
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+<img src=./img/spring_web_mvc_model.png width=450px />
+
+従来の `Spring Web MVC` のアーキテクチャはこんな感じ。<br/>
+Servlet API をベースに作成されている。（非同期 & ブロッキング）
+
+???
+
+```
+従来のSpring Web MVCは
+サーブレットコンテナ上動かすことを想定しているため、Servlet API をベースに作成されている。
+```
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+<img src=./img/spring_web_flux_model.png width=745px />
+
+`Spring Web Flux` のアーキテクチャはこれ。<br/>
+Reactive Streams をベースにしている。（非同期 & ノンブロッキング）
+
+???
+
+```
+Tomcat や Jetty と書いてあるが、ノンブロッキングなランタイム上で動作する。
+
+SpringMVC は Servletベース で作成されており、
+Spring Flux は Reactive Streams ベースで作成されている。
+（そもそもReactive Streamsがノンブロッキングなランタイム上で動かすことを前提）
+
+```
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+### WebFluxでのルーティング定義
+
+```java
+// アノテーションベースの定義（見慣れたやつ）
+@RestController
+public class HelloController {
+    
+    @GetMapping("/hello")
+    Flux<String> hello() {
+        return Flux.just("Hello", "World");
+    }
+}
+```
+
+```java
+// WebFlux の Router Functions
+RouterFunction<ServerResponse> routes() {
+  return RouterFunctions.route(
+    RequestPredicates.GET("/hello"), 
+    req -> ServerResponse.ok()
+           .body(Flux.just("Hello", "World"), String.class)
+  );
+}
+```
+
+???
+
+```
+Spring Web Flux では、２種類のルーティング定義が可能。
+
+1つは、従来と同じアノテーションベースのルーティング定義。
+もう一つは、Router Functionsという関数interfaceベースのルーティング定義。
+
+```
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+#### Q. で、Reactiveになると何がいいの？
+
+--
+
+#### A. 同時接続数が増加しても、スループットが低下しにくい。
+
+以下は最大スレッド数は200で、リクエストを受けてから１秒後にレスポンスを返すようにした場合のデータ。（スライドの内の数値）
+
+<table border=1>
+  <tr>
+    <th rowspan=2>同時接続数</th>
+    <th colspan=2>Spring MVC</th>
+    <th colspan=2>Spring Flux</th>
+  </tr>
+  <tr>
+    <th>Response Time</th><th>Peek時スレッド数</th>
+    <th>Response Time</th><th>Peek時スレッド数</th>
+  </tr>
+  <tr>
+    <td>100</td>
+    <td>1.04sec</td><td>129</td>
+    <td>1.05sec</td><td>30</td>
+  </tr>
+  <tr>
+    <td>200</td>
+    <td>1.07sec</td><td>218</td>
+    <td>1.06sec</td><td>30</td>
+  </tr>
+  <tr>
+    <td>300</td>
+    <td>1.51sec</td><td>218</td>
+    <td>1.04sec</td><td>30</td>
+  </tr>
+</table>
+
+数値から見て分かる通り、同時接続数が増えてもスレッド数が一定でレスポンスタイムも一定。
+
+???
+
+```
+Servletコンテナ上で動くServletは、
+スレッド数を超えるリクエストが来ると、待ちが発生する。（ブロック）
+
+最大スレッド数は 200 なので、300リクエストが同時に来ると 100リクエストは待つことになる。
+
+しかし、Reactive Streamsはノンブロッキングなランタイム上で動く。
+なので、最大スレッド数を超えたリクエストが来ても、
+待ち（ブロック）が発生しないので、レスポンスタイムに変化が無い。
+
+```
+
+???
+
+```
+簡単に言ってしまうと、効率よくリクエストを捌くことが可能になる。
+```
+
+---
+class: middle
+
+## Spring Framework 5.0によるReactive Web Application
+
+### セッション資料
+
+* [Spring Framework 5.0による Reactive Web Application](https://www.slideshare.net/makingx/spring-framework-50-reactive-web-application-javadaytokyo)
+
+---
+class: middle
+
+# Agenda
+
+* ~~Java Day Tokyo とは~~
+* ~~参加セッション~~
+ * ~~基調講演~~
+ * ~~Modular Development with JDK9~~
+ * ~~Introducation to JShell: Offical REPL Tool for Java Platform~~
+ * ~~JavaSE9のすすめ~~
+ * ~~Spring Framework 5.0によるReactive Web Application~~
+* **感想**
+
+---
+class: middle
+
+## 感想
+
+* Java9の情報が詳細に聞けたので良かった。
+* カンファレンスに参加することでモチベが向上する。
+ * 自分の無知さを認識できるので。
+
+---
+class: middle
+
+### ご清聴ありがとうございました。<br/>質問とかあれば。
+
+        </textarea>
+        <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var slideshow = remark.create({
+                ratio: '4:3'
+            });
+        </script>
+    </body>
+</html>
