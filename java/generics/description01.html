@@ -1,0 +1,720 @@
+<DOCTYPE html>
+<html>
+    <head>
+        <title>ジェネリクスの基本</title>
+        <meta charset="utf-8">
+        <style>
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+            @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+            @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+            body { 
+                font-family: 'Droid Serif';
+            }
+            h1, h2, h3 {
+                text-align: center;
+                color: #006cb4;
+                font-weight: 700;
+            }
+            .remark-slide-content h1 { font-size: 3em; }
+            .remark-slide-content h2 { font-size: 2em; }
+            .remark-slide-content h3 { font-size: 1.4em; }
+            .footnote {
+                position: absolute;
+                bottom: 1em;
+            }
+            /* リンク */
+            a, a > code , p a{
+                color: #ff1a75;
+                text-decoration: none;
+                font-size: 100%;
+            }
+            /* コード */
+            code {
+                font-family: 'Ubuntu Mono';
+                border-radius: 5px;
+                -web-border-radius: 5px;
+                font-size: 90%
+            }
+            .remark-code, .remark-inline-code {
+                font-size: 85%;
+                color: #660000;
+                font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+                background-color: #eeeeee;
+            }
+            .remark-code-line-highlighted {
+                 background-color: #eeeeee; 
+            }
+            .pull-left {
+                float: left;
+                width: 47%;
+            }
+            .pull-right {
+                float: right;
+                width: 47%;
+            }
+            .pull-right ~ p {
+                clear: both;
+            }
+            /* タイトルページ */
+            .inverse {
+                background: #006cb4;
+                color: #CCC;
+            }
+            .inverse h1, .inverse h2 {
+                color: #f3f3f3;
+                line-height: 1em;
+            }
+            /* 左右二段表示 */
+            .left-column {
+                width: 48%;
+                float: left;
+            }
+            .right-column {
+                width: 48%;
+                float: right;
+            }
+            p , li {
+                font-size: 120%;
+            }
+            /* リスト内のリストは文字を小さく */
+            ul li ul li , ol li ul li{
+                font-size: 80%;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="source">
+class: center, middle
+
+# ジェネリクスの基本
+
+Matsunaga Takaaki
+
+???
+
+```
+あんまり難しいことは話さないつもり。
+色々話すと2時間ぐらいかかりそう。
+```
+
+---
+class: middle
+
+# Agenda
+
+* ジェネリクスの概要
+  * ジェネリクスとは
+  * どこで使われるか
+* ジェネリクスのメリット
+  * ジェネリクスのデメリット
+* まとめ
+
+???
+
+
+---
+class: middle
+
+# Agenda
+
+* **ジェネリクスの概要**
+  * ジェネリクスとは
+  * どこで使われるか
+* ジェネリクスのメリット
+  * ジェネリクスのデメリット
+* まとめ
+
+???
+
+---
+class: middle
+
+## ジェネリクスとは
+
+---
+class: middle
+
+## ジェネリクスとは
+
+> ジェネリックスはジェネリック・プログラミングの機能であり、
+> 2004年にバージョンJ2SE 5.0でJavaプログラミング言語に追加されました。
+> それらは、Javaの型システムを拡張して、**「コンパイル時型の安全性を提供しながら、
+> さまざまな型のオブジェクトを操作する型またはメソッド」を可能にする**ように設計されています。  
+> [Generics in Java - Wikipedia](https://en.wikipedia.org/wiki/Generics_in_Java)
+
+<small>※ジェネリック・プログラミングはオブジェクト指向とは異なる概念。</small>
+
+???
+
+```
+C++だと、テンプレートという機能がジェネリクスに近いらしい。
+```
+
+---
+class: middle
+
+## ジェネリクスとは
+
+> 「コンパイル時型の安全性を提供しながら、さまざまな型のオブジェクトを操作する型またはメソッド」を可能にする
+
+とは...
+
+* 「任意の型を操作することが可能なクラス」を定義できる
+* 「任意の型を操作することが可能なメソッド」を定義できる
+* ただし、その定義内容が型の安全性を保証出来ない（実行時例外が発生する可能性がある）場合はコンパイルエラーにする
+
+ということ。  
+噛み砕くと「型安全で柔軟なプログラムを書く」ための機能が、ジェネリクス。
+
+???
+
+```
+言葉で言われても多分ピンと来ないはず...。
+ジェネリクス分かってる人だとニュアンスは伝わるかな。
+```
+
+---
+class: middle
+
+## どこで使うか
+
+---
+class: middle
+
+## どこで使うか
+
+ジェネリクスはコレクション・フレームワークで目にすることが多い。
+（コレクションは `List` や `Map` などの、要素の集合を扱うもの）
+
+```java
+List<String>  strList  = ... // 文字列型の要素を保持するリスト
+List<Integer> intList  = ... // 整数型の要素を保持するリスト
+List<User>    userList = ... // ユーザ型の要素を保持するリスト
+```
+
+この `<String>` や `<Integer>`、`<User>` がジェネリクスにあたる部分。
+Java知ってる人なら、見た・使ったことがあるはず。  
+※今回は `List` を使ってジェネリクスの説明を進めます。
+
+???
+
+```
+ほとんどの静的型付け言語に、ジェネリクスが組み込まれているはず。
+```
+
+---
+class: middle
+
+## どこで使うか
+
+`List` の定義は以下のようになっている。（一部省略）
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+    ...
+}
+```
+
+`List` を使用する際に `<E>` の部分に、「リストが保持する要素の型」を指定する。
+`<E>` は「任意の型情報」を表し、使用時は `<String>` など「具体的な型情報」を指定する。
+
+`<E>` のように「仮置きされた型情報」を **仮型パラメータ** と呼ぶ。  
+対して、`<String>` のように「明示的に指定された型情報」を **実型パラメータ** と呼ぶ。
+
+
+
+???
+
+---
+class: middle
+
+# Agenda
+
+* ~~ジェネリクスの概要~~
+  * ~~ジェネリクスとは~~
+  * ~~どこで使われるか~~
+* **ジェネリクスのメリット**
+  * ジェネリクスのデメリット
+* まとめ
+
+???
+
+
+---
+class: middle
+
+# ジェネリクスのメリット
+
+
+---
+class: middle
+
+## ジェネリクスのメリット
+
+* 型安全が保証された処理を定義できる
+* 1つの処理を異なる型に適用できる
+
+まずは、ジェネリクスが無いと何が起こるのか。
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+以下はジェネリクスが導入される前(Java1.4以前）の `List` 。
+
+```java
+public interface List {
+    boolean add(Object o);  // 要素の追加
+    Object get(int index);  // 要素の取得
+    ...
+}
+```
+
+`List` は様々な型の要素を扱うために、 `Object` 型で入出力を行うように定義されていた。
+
+???
+
+
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+Java1.4以前の `List` を使用したコードが以下。（勿論今でも動く）
+
+```java
+List stringList = new ArrayList();
+stringList.add("りんご");
+stringList.add("みかん");
+
+for(int i = 0; i < stringList.size(); i++){
+    String fruit = (String)stringList.get(i); // Stringへのキャストが必要
+    System.out.println(fruit);
+}
+```
+
+実行結果
+
+```txt
+りんご
+みかん
+```
+
+一見問題ないように見える。
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+でも、要素は `Object` なので以下のようなコードも書ける。
+
+```java
+List stringList = new ArrayList();
+stringList.add("りんご");
+stringList.add("みかん");
+stringList.add(Integer.valueOf(0)); // Integer は Object のサブクラス
+
+for(int i = 0; i < stringList.size(); i++){
+    String fruit = (String)stringList.get(i);
+    System.out.println(fruit);
+}
+```
+
+7行目で `stringList` から取り出した要素を `String` 型にキャストしている。  
+が、4行目では `String` 型ではなく `Integer` 型の要素を追加しているので、
+型変換エラー（`ClassCastException`）が発生するのは自明。
+
+👉 **コンパイルエラーにして欲しい！！**
+
+---
+class: middle
+
+## でもコンパイルは通る...
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+我々からすればエラーであることは見れば分かる。  
+しかし、コンパイラからすれば「`Integer` は `Object` のサブクラスだから問題なし
+（=`Object`として振る舞うことができるからOK）」と判断される。
+
+コンパイルが通るということは実行できるということ。  
+先程のプログラムを実行すると...
+
+```txt
+りんご
+みかん
+Exception in thread "main" java.lang.ClassCastException: 
+            java.lang.Integer cannot be cast to java.lang.String
+```
+
+予想通り `ClassCastException` が発生する。
+
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+見て分かる通り、ジェネリクスが無いと以下のような危険性が伴う。
+
+* あるリストが特定の型の要素しか保持していないことを保証できない。
+  * 要は全て `Object` として扱うしかない。
+  * どこかで別の型の値が設定されるかも...。
+* 扱う要素の型が自明であるにも関わらず、取り出す要素の型は `Object` なので明示的にキャストする必要がある。
+  * キャストに失敗する（`ClassCastException` が発生する）可能性がある。
+  * つまり型安全ではない。
+
+裏を返せば、これらを排除すれば安全性が保証できる。  
+
+---
+class: middle, center
+
+## 👉 じゃあ、どうする？
+
+--
+
+**特定の型しか保持しないリストを作ればいいんじゃ？**
+
+--
+
+じゃあ、作ってみよう。
+
+---
+class: middle
+
+`String` 型の要素しか保持しないリスト。
+
+```java
+public class StringList {
+    boolean add(String s); // Stringの値を追加
+    String get(int index); // Stringの値を返却
+    ...
+}
+```
+
+```java
+StringList list = new StringList();
+
+list.add("りんご");
+String apple = list.get(0);
+
+list.add(Integer.valueOf(0));
+```
+
+```java
+エラー: 不適合な型: IntegerをStringに変換できません:
+list.add(Integer.valueOf(0));
+                         ^
+```
+
+確かにキャストも不要になって、異なる型の値を入れるとコンパイルエラーになる。  
+
+---
+class: middle
+
+## やったぜ ٩( ‘ω’ )و 
+
+---
+class: middle
+
+## じゃあ次は `Integer` 型を扱うリストと、`User` 型を扱うリストもお願い
+
+---
+class: middle
+
+## (´・ω・｀) 辛い...
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+特定の型しか扱わないようなクラスを独自で定義してしまうのも手。  
+だが、そうなると他の型にも対応するクラスを作らなければならなくなってしまう。
+
+今回のように汎用性の高いものだと、引数と戻り値が異なるだけで同じ処理になる。
+
+```java
+public class StringList {
+    
+    private final List list = new ArrayList();
+
+    public boolean add(String s) {
+        return list.add(s);
+    }
+
+    public String get(int index) {
+        return (String) list.get(index);
+    }
+
+    public int size(){
+        return list.size();
+    }
+}
+```
+
+---
+class: middle
+
+## ジェネリックスが無いとどうなるか
+
+というわけで、先程のデメリットに追加。
+
+* あるリストが特定の型の要素しか保持していないことを保証できない。
+  * 要は全て `Object` として扱うしかない。
+  * どこかで別の型の値が設定されるかも...。
+* 扱う要素の型が自明であるにも関わらず、取り出す要素の型は `Object` なので明示的にキャストする必要がある。
+  * キャストに失敗する（`ClassCastException` が発生する）可能性がある。
+  * つまり型安全ではない。
+* **型安全を実現する場合、引数と戻り値が異なるだけの同じ処理を複数のクラスに定義必要がある。**
+
+--
+
+👉 これらを解決するのがジェネリクス。
+
+---
+class: middle
+
+## ジェネリクスのメリット
+
+* 型安全が保証された処理を定義できる
+* 1つの処理を異なる型に適用できる
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+    ...
+}
+```
+
+
+
+---
+class: middle
+
+## ジェネリクスのメリット
+
+* **型安全が保証された処理を定義できる**
+* 1つの処理を異なる型に適用できる
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+    ...
+}
+```
+
+---
+class: middle
+
+## 型安全が保証された処理を定義できる
+
+`add` は 「`E`型の値を引数にとる」メソッドで、
+`get` は 「`E`型の値を返却する」メソッド。
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+}
+```
+
+ここで重要なのは **「`<E>` の型が決まる = `add` の引数や `get` の戻り値も決定する」** ということ。
+
+👉 つまり...
+
+---
+class: middle
+
+## 型安全が保証された処理を定義できる
+
+```java
+List<String> stringList = ...; 
+```
+
+とした場合、
+
+```java
+public interface List<String> { // 元は List<E>
+    boolean add(String e);      // 元は boolean add(E e);
+    String get(int index);      // 元は E get(int index);
+}
+```
+
+このような定義になっているのと同じ。
+（実際にこのようなクラスが作られるわけではなく、コンパイラが論理的に判断する）  
+
+なので、
+
+---
+class: middle
+
+## 型安全が保証された処理を定義できる
+
+```java
+List<String> stringList = new ArrayList<>();
+
+stringList.add("りんご");
+String apple = stringList.get(0); // キャストが不要に
+
+stringList.add(Integer.valueOf(99)); // Stringではないのでコンパイルエラー
+```
+
+* 型が判明しているので、明示的なキャストが不要になる。
+* 指定した型以外であれば、コンパイルエラーになる。
+
+--
+
+## 型安全!! ٩( ‘ω’ )و 
+
+
+---
+class: middle
+
+## ジェネリクスのメリット
+
+* 型安全が保証された処理を定義できる
+* **1つの処理を異なる型に適用できる**
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+    ...
+}
+```
+
+---
+class: middle
+
+## 1つの処理を異なる型に適用できる
+
+ここまでくれば、言いたいことが何となく分かるはず...。
+
+```java
+public interface List<E> {
+    boolean add(E e);
+    E get(int index);
+    ...
+}
+```
+
+`add` や `get` は特定の型に依存しない処理。  
+リストは「要素の集合を保持し、追加や指定された位置の要素を返す」だけの入れ物。
+
+👉 「実行時に型を指定してもらえばいいだけで、中身は同じでエエやん」
+
+---
+class: middle
+
+## 1つの処理を異なる型に適用できる
+
+例えば、「あるリストから、先頭の要素を返す」メソッドを作成する。
+単に「先頭の要素返す」だけなので、特定の型には依存しない。
+
+```java
+public static <E> E head(List<E> list){
+    E e = list.get(0);
+    return e;
+}
+```
+
+そのため、リストから取り出す要素の型と返却する要素の型は任意となる。
+つまり定義自体は「仮型（`E`）」を扱うようにすればいい。
+
+---
+class: middle
+
+## 1つの処理を異なる型に適用できる
+
+```java
+List<String> strList = List.of("A", "B", "C");
+List<Integer> intList = List.of(0, 1, 2);
+
+String a = head(stringList);
+Integer zero = head(intList);
+```
+
+扱う型を後決めさせることで、1つの処理で複数の型に対応させることができる。
+
+
+---
+class: middle, center
+
+## じゃあ、ジェネリクスのデメリットは？
+
+--
+
+個人的には「ない」と思っている。  
+記述量が増えるくらい？
+
+---
+class: middle
+
+## ジェネリクスのデメリット
+
+ジェネリクスだとできないこともある。
+
+* `List<String>[]` などは作れない。
+  * `List[]` はできるけど、`List<String>[]` は無理。
+
+何故これが許されてないのかは、「変性」について説明しなければならないので割愛。
+（以下のコードが危険なのと一緒）
+
+```java
+Object[] objects = new String[10];
+object[0] = Integer.valueOf(0); // ArrayStoreExceptionがスローされる
+```
+
+
+以下のサイトが分かりやすいので、気になる人は読んでみてください。
+
+* [【Java】ジェネリックス型の不変、共変、反変とは何か](http://hjm333.hatenablog.com/entry/2016/02/07/235454)
+
+
+---
+class: middle
+
+# まとめ
+
+### ジェネリクスは「型安全で柔軟な処理を定義」するためのもの。
+
+* `<E>` などは **仮型パラメータ**。
+* `<String>` などは **実型パラメータ**。
+
+---
+class: middle
+
+## 参考
+
+* [Effective Java 第2版](https://www.amazon.co.jp/EFFECTIVE-JAVA-Java-Joshua-Bloch/dp/4621066056/ref=sr_1_1?ie=UTF8&qid=1506696969&sr=8-1&keywords=effective+java)
+* [Generics のワイルドカードを使いこなす、第 1 回](https://www.ibm.com/developerworks/jp/java/library/j-jtp04298.html?ca=drs-)
+* [Javaのジェネリクス(総称型)って何？ - Qiita](https://qiita.com/MuriNishimori/items/31d07fd49eec579f3ba1)
+* [1. ジェネリクス - テックスコア](http://www.techscore.com/tech/Java/JavaSE/JavaLanguage/1/)
+
+---
+class: middle, center
+
+ご静聴、ありがとうございました。  
+質問とかあれば。
+
+        </textarea>
+        <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var slideshow = remark.create({
+                ratio: '4:3'
+            });
+        </script>
+    </body>
+</html>
