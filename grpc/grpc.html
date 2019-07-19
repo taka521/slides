@@ -1,0 +1,334 @@
+<DOCTYPE html>
+    <html>
+
+    <head>
+        <title>gRPC</title>
+        <meta charset="utf-8">
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+            @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+            @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+            body {
+                font-family: 'Droid Serif';
+            }
+
+            h1,
+            h2,
+            h3 {
+                text-align: center;
+                color: #006cb4;
+                font-weight: 700;
+            }
+
+            .remark-slide-content h1 {
+                font-size: 3em;
+            }
+
+            .remark-slide-content h2 {
+                font-size: 2em;
+            }
+
+            .remark-slide-content h3 {
+                font-size: 1.4em;
+            }
+
+            .footnote {
+                position: absolute;
+                bottom: 1em;
+            }
+
+            /* リンク */
+            a,
+            a>code,
+            p a {
+                color: #ff1a75;
+                text-decoration: none;
+                font-size: 100%;
+            }
+
+            /* コード */
+            code {
+                font-family: 'Ubuntu Mono';
+                border-radius: 5px;
+                -web-border-radius: 5px;
+                font-size: 90%
+            }
+
+            .remark-code,
+            .remark-inline-code {
+                font-size: 85%;
+                color: #660000;
+                font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+                background-color: #eeeeee;
+            }
+
+            .remark-code-line-highlighted {
+                background-color: #eeeeee;
+            }
+
+            .pull-left {
+                float: left;
+                width: 47%;
+            }
+
+            .pull-right {
+                float: right;
+                width: 47%;
+            }
+
+            .pull-right~p {
+                clear: both;
+            }
+
+            /* タイトルページ */
+            .inverse {
+                background: #006cb4;
+                color: #CCC;
+            }
+
+            .inverse h1,
+            .inverse h2 {
+                color: #f3f3f3;
+                line-height: 1em;
+            }
+
+            /* 左右二段表示 */
+            .left-column {
+                width: 48%;
+                float: left;
+            }
+
+            .right-column {
+                width: 48%;
+                float: right;
+            }
+
+            p,
+            li {
+                font-size: 120%;
+            }
+
+            /* リスト内のリストは文字を小さく */
+            ul li ul li,
+            ol li ul li {
+                font-size: 90%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <textarea id="source">
+class: center, middle
+# gRPC
+
+2019/07/25
+
+---
+class: middle
+
+## Agenda
+
+* What's gRPC ?
+* Use case
+
+---
+class: middle, center
+
+<img src=".\img\2019-06-27_15h50_48.jpg" width="100%"/>
+
+---
+class: middle
+
+## What's gRPC ?
+
+GoogleがOSSとして提供している、**RPC(Remote Procedure Call)**フレームワーク。  
+`.proto`ファイルにIFを定義すると、サーバとクライアントのソースコードを自動生成してくれる。  
+👉 `ProtocolBuffers` というものを利用している。(これもGoogleが開発している)
+
+* [https://grpc.io/](https://grpc.io/)
+* [https://developers.google.com/protocol-buffers/](https://developers.google.com/protocol-buffers/)
+
+対応言語は C++, C#, Dart, Go, Java, Node.js, PHP, Python, Ruby。
+
+
+---
+class: middle
+
+## What's gRPC ?
+
+
+RPCって？
+
+> プログラムから別のアドレス空間（通常、共有ネットワーク上の別のコンピュータ上）にあるサブルーチンや手続きを実行することを可能にする技術。
+> プログラマはローカルなサブルーチン呼び出しと基本的に同じコードをリモート呼び出しについても行う。  
+> 
+> https://ja.wikipedia.org/wiki/遠隔手続き呼出し
+
+
+---
+class: middle
+
+## What's gRPC ?
+
+ProtocolBuffersって？
+
+> インタフェース定義言語 (IDL) で構造を定義する通信や永続化での利用を目的としたシリアライズフォーマット  
+> XMLとの比較で、3〜10倍小さく、20〜100倍高速である  
+> XMLでは69バイト以上の物が Protocol Buffersでは28バイトであり、XMLのパースは5〜10マイクロ秒も必要だが、Protocol Buffersのパースは0.1〜0.2 マイクロ秒で完了するとしている。
+> 
+> https://ja.wikipedia.org/wiki/Protocol_Buffers
+
+---
+class: middle
+
+## What's gRPC ?
+
+hello_world.proto
+
+```protocol-buffers
+service HelloWorldService {
+    rpc HelloWorld (HelloRequest) return (HelloResponse) {}
+}
+
+message HelloRequest {
+    int64 id = 1;
+    string name = 2;
+    Gender gender = 3;
+
+    enum Gender {
+        MAN = 0;
+        WOMAN = 1;
+    }
+}
+
+message HelloResponse {
+    int32 code = 1
+    string message = 2;
+}
+```
+
+---
+class: middle
+
+## What's gRPC ?
+
+先程の `hello_world.proto` をJavaでビルドすると、
+
+* `HelloWorldServiceGrpc.java`
+* `HelloRequest.java`
+* `HelloResponse.java`
+
+といったクラスが作成される。  
+👉 Javaの場合だと、mavenやgradleプラグインでビルド時にgRPCのコンパイルをフックさせる。
+
+---
+class: middle
+
+## What's gRPC ?
+
+作成されたクラスを元に、実際に実装するとこんな感じになる。
+
+**クライアント**
+
+```kotlin
+// 接続先情報
+val channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext().build()
+
+// スタブと呼ばれるgRPCのクライアントを作成
+val blockingStub = HelloWorldServiceGrpc.newBlockingStub(channel)
+
+// リクエスト情報の作成
+val request = HelloRequest.newBuilder().apply {
+    id = 100L
+    name = "Bob"
+    gender = HelloRequest.Gender.MAN
+}.build()
+
+// 呼出
+blockingStub.helloWorld(request)
+```
+
+---
+class: middle
+
+## What's gRPC ?
+
+**サーバ**
+
+```HelloWorldService.kt
+class HelloWorldService : HelloWorldServiceGrpc.HelloWorldServiceImplBase() {
+
+    override fun helloWorld(request: HelloRequest, responseObserver: StreamObserver<HelloResponse>) {
+        // 本来はリクエストをゴニョゴニョして、onNextにデータを流す
+        responseObserver.onNext(
+            HelloResponse.newBuilder().apply {
+                code = 200
+                message = "Hello World!"
+            }.build()
+        )
+        responseObserver.onCompleted()
+    }
+}
+```
+
+---
+class: middle
+
+## What's gRPC ?
+
+なにが嬉しいか
+
+* `.proto`ファイルがドキュメント（IF定義書）になる。
+* 可読性が高い(直感的な)ため、メンテが楽。
+  * XMLやJSON schemaは読みにくいし、メンテも面倒なイメージがある。
+* サーバは必ずこの定義に従ってコーディングされていることが保証される。
+  * 未実装の場合は、実行時に未実装エラーが吐かれる。
+* HTTP2.0に対応しているため、ストリーム（多重送信）が利用できる。
+  * また、HTTP2.0は高速
+
+---
+class: middle
+
+## Agenda
+
+* ~~What's gRPC ?~~
+* **Use case**
+
+---
+class: middle, center
+
+# Use case
+
+---
+class: middle
+
+## Use case
+
+* マイクロサービス
+* モバイルアプリ
+
+日本だとCookpadやfreee、メルカリ、LINEなどで導入事例あり。  
+どの会社もMSAに対して、gRPCを採用しているよう。
+
+---
+class: middle
+
+## その他
+
+* Springにも組み込めるみたいだけど、未検証
+* 「クライアントからはRESTで呼び出したい！」場合には、`grpc-gateway` というもので実現できるらしい。
+  * Client to grpc-gateway => REST
+  + grpc-gateway to Server => gRPC
+
+
+        </textarea>
+        <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            var slideshow = remark.create({
+                ratio: '4:3'
+            });
+        </script>
+    </body>
+
+    </html>
