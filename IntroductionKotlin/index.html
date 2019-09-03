@@ -164,37 +164,45 @@ class: middle
 
 Kotlinには様々な機能がありますが、その中でも個人的に有用だと思う機能について2つほど紹介。
 
-* Null安全
+* null安全
 * Data Class
 
 ---
 class: middle
 
-## Null安全
+## null安全
+
+---
+class: middle, center
+
+### Kotlinの特徴 - null安全
+
+**null is guilty.**
+
 
 ---
 class: middle
 
-### Kotlinの特徴 - Null安全
+### Kotlinの特徴 - null安全
 
-Kotlinは Null になる可能性のある変数が、適切に処理されるかをコンパイル時にチェックし、実行時にNPEが発生しないことを保障する。
+Kotlinは null になる可能性のある変数が、適切に処理されるかをコンパイル時にチェックし、実行時にNPEが発生しないことを保障する。
 このように
 
-** "Nullチェックの強制" と "チェック方法の妥当性" がコンパイラによってチェックされる仕組み**
+** "nullチェックの強制" と "チェック方法の妥当性(網羅性)" がコンパイラによってチェックされる仕組み**
 
-を **NULL安全** と呼ぶ。（NULLを回避することを指すのではないので注意）
+を **null安全** と呼ぶ。（小手先のテクニックでnullを回避することを指すのではないので注意）
 
 
 ---
 class: middle
 
-### Kotlinの特徴 - Null安全
+### Kotlinの特徴 - null安全
 
-Kotlinはデフォルトで変数へのNULL代入を許可しない。  
-また、NULLを許容する変数を操作する場合は **「操作時に、変数がNULLでないことを保証する」** 必要がある。
+Kotlinはデフォルトで変数へのnull代入を許可しない。（非null許容型）  
+また、nullを許容する変数（null許容型）を操作する場合は **「操作時に、変数がnullでないことを保証する」** 必要がある。
 
 ```Kotlin
-// 非NULL許容型の変数定義
+// 非null許容型の変数定義
 var message: String = "Hello World"
 message = null // コンパイルエラー
 ```
@@ -202,24 +210,25 @@ message = null // コンパイルエラー
 ---
 class: middle
 
-### Kotlinの特徴 - Null安全
+### Kotlinの特徴 - null安全
 
-ただ、Javaとの相互運用の都合上、Nullableな変数を宣言したいケースが出てくる。  
-その場合は型宣言の後ろに `?` を付加することで、Nullableな変数として扱うことが可能となる。
+ただ、nullableな変数を宣言したいケースが出てくる。  
+その場合は型宣言の後ろに `?` を付加することで、nullableな変数として扱うことが可能となる。
 
 ```kotlin
-// NULL許容型の変数定義
+// null許容型の変数定義
 var message: String? = null // OK
 ```
 
-<small>※ちなみに `String` と `String?` は全く別の型なので同一視しないように。</small>  
-ただし、先程記載した通り「操作時に、変数がNULLでないことを保証する」する必要がある。  
-具体的な方法としては
+<small>※ちなみに `String` と `String?` は全く別の型なので同一視しないように。</small> 
+
+ただし、先程記載した通り「操作時に、変数がnullでないことを保証する」する必要がある。  
+具体的な方法としては...
 
 ---
 class: middle
 
-### Kotlinの特徴 - Null安全
+### Kotlinの特徴 - null安全
 
 ```kotlin
 var msg: String? = null
@@ -232,12 +241,12 @@ if (msg != null) message.length
 msg?.length
 
 // エルビス演算子（?:）の利用
-// 変数がnullの場合、メソッドは実行されずに ?: の後に続く値が返る。（よく使う）
+// 左辺の評価結果がnullの場合 ?: の後に続く値が返る。（よく使う）
 msg?.length ?: -1
 
 // 強制アンラップ（!!）の利用
-// 強制的に非NULL許容型として扱い、メソッドを実行する。
-//（よっぽどのことがない限り使わない）
+// 強制的に非null許容型として扱い、メソッドを実行する。
+// （よっぽどのことがない限り使わない）
 msg!!.length
 ```
 
@@ -253,48 +262,146 @@ class: middle
 
 ### Kotlinの特徴 - Data Class
 
-Kotlinには「データとして値を保持するためだけのクラス」を簡単に宣言できる、`Data class` という機能がある。
-Javaだと、よくDTO（Data Transfer Object）といったデザインパターン名で呼ばれている。
+Kotlinには
 
+### データとして値を保持するためだけのクラス
 
----
-class: middle
-
-### Kotlinの特徴 - Data Class
-
-Kotlinの場合、通常のクラス宣言でもgetter／setterは自動で生えるが、Data classを利用したクラスはそれだけではない。
-Data classによって宣言されたクラスには、以下のメソッドが自動で生成される。
-
-* プロパティのgetter, setter
-* `equals`、`hashCode`、`toString`
-* `componentN` メソッド
-* インスタンスのコピー作成する`copy`メソッド
-
----
-class: middle
-
-### Kotlinの特徴 - Data Class
-
-getter, setterの生成に関しては特に言及することが無いので省略。  
-`equals`、`hashCode`、`toString` については、適切にオーバライドされたメソッドが生える。  
-
-特に `equals` と `hashCode` は自前で実装するとそれなりに記述量が多く、
-且つ「一般契約」と呼ばれる「`equals`をオーバライドする場合の決まり事」に従う必要がある。
-（一般契約に従わないと余裕でバグるので、JavaだとIDEに自動生成してもらうのが良い）
-
----
-class: middle
-
-### Kotlinの特徴 - Data Class
-
-`componentN` メソッドとは、各プロパティをgetterではなく `component1`, `component2` といった形で取得できるメソッド。
-何が嬉しいかというと、以下のように「あるインスタンスから、一部だけを別の変数に代入したい」ケースが容易に実現可能。
+を簡単に宣言できる、`Data Class` という機能（クラス定義方法）がある。  
 
 ```kotlin
-data class User(val name: String, val age: Int, val gender: Gender)
+data class User(val id: Long, val name: String, val age: Int)
+```
 
-val user = User("田中", 20, Gender.MAN)
-val (name, age) = user;
+上記のクラスとほぼ同様の実装をJavaで行うと約60行になる。
+
+[User.java - gist](https://gist.github.com/taka521/d03352edb8e5e05c3a48284cabb89042)
+
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+Javaから見たときの`Data Class`最大の利点は「記述力が少ない」なのだが、おまけで以下のメソッドも自動的に生成される。
+
+* getter, setter
+* `equals`, `hashCode`, `toString` メソッド
+* `componentN` メソッド
+* `copy`メソッド
+
+getter, setter以外を、順番に説明していきます。  
+<small>※なお、通常のクラス宣言でもgetter, setterは自動で生えます</small>
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+〜`equals`, `hashCode`, `toString`〜
+
+単なるDTO(Data Transfer Object)の場合は、そこまで有用ではない。  
+ただ、値クラス(ValueObject)のように論理等価性が求められるような場合は非常に有用。  
+
+どういうことかと言うと...
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+`Object#equals`は参照値の比較を行っているので、  
+単なるクラス宣言だと
+
+```kotlin
+class Money(val value: Int) // お金を表す型
+
+val moneyA = Money(100) // 100円
+val moneyB = Money(100) // 100円
+
+moneyA == moneyB
+```
+
+は `false` になる。  
+<small>※kotlinの場合 `==` が `equals` と同じ</small>
+
+---
+class: middle, center
+
+# 🤔🤔🤔
+
+100円は100円でしょ...
+
+---
+class: middle, center
+
+じゃあ自前で`equals`をオーバライドすると...
+
+---
+class: middle
+
+```kotlin
+class Money(val value: Int) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Money) return false
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return value
+    }
+
+    override fun toString(): String {
+        return "Money(value=$value)"
+    }
+    
+}
+```
+
+---
+class: middle, center
+
+長い
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+`equals`を自前で実装すると、プロパティ数に比例して記述量が多くなる。  
+また、`equals`をオーバライドする場合には、
+
+* 一般契約
+
+と呼ばれる「`equals`をオーバライドする場合の決まり事」に従う必要がある。 
+
+<small>※一般契約に従わないと余裕でバグる（例えば`HashMap`や`HashSet`は一般契約に従ったクラスを扱うことを前提に設計されている）ので、IDEに自動生成してもらうのが良い。</small>
+
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+`data class`としてクラス定義することで、面倒な実装や制約のことを気にする必要がなくなる。
+
+あとは `toString` が
+
+```kotlin
+println(Money(100).toString()) // => Money(value=100)
+```
+
+という感じで有用な文字列表現を返してくれるので嬉しい。
+
+
+<small>ログに↓みたいなのが出力されてるシステム見たことアルヨ...</small>
+
+```kotlin
+com.example.Hoge@8a50f1cc
 ```
 
 ---
@@ -302,15 +409,65 @@ class: middle
 
 ### Kotlinの特徴 - Data Class
 
-この`componentN`、具体的には `分割宣言(Destructuring Declarations)` という機能で、JSでいう分割代入に近いが、JSほど便利ではない。  
-（ちなみに、`componentN`というメソッド名にすると分割宣言が有効になるわけではない）
+〜`componentN`〜
+
+各プロパティをgetterではなく  
+`component1()`, `component2()`, ...  
+といった感じで、N番目のプロパティを取得するメソッドが生える。
 
 ---
 class: middle
 
 ### Kotlinの特徴 - Data Class
 
-例えばJSの分割代入は
+何が嬉しいかというと、以下のように「あるインスタンスから、プロパティの一部を別の変数に代入したい」ケースに対応できる。
+
+```kotlin
+data class User(val name: String, val age: Int, val gender: Gender)
+
+// 名前と性別だけ抽出（年齢は不要）
+val user = User("田中", 20, Gender.MAN)
+val (name, _, gender) = user
+
+// ラムダの引数に、一部のプロパティだけ渡す
+val users: List<User> = ...
+users.map { (name, age) -> 
+    ...
+}
+```
+
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+この`componentN`、具体的には 
+
+### 分解宣言(Destructuring Declarations)
+
+という機能で、JSでいう分割代入に近い。  
+
+<small>
+※ちなみに、`componentN`というメソッド名にすると分解宣言が有効になるわけではなく、
+`componentN`を`operator`修飾する必要がある。
+</small>
+
+```kotln
+operator fun component1() ...
+operator fun component2() ... 
+```
+
+<small>`operator` + `componentN` = 分解宣言</small>
+
+---
+class: middle
+
+### Kotlinの特徴 - Data Class
+
+〜おまけ〜 
+
+JSの分割代入は
 
 ```js
 // 先頭だけ個別、残りは配列のまま分割代入
@@ -322,15 +479,17 @@ const obj = { name: "田中", age: 20, gender: "man" };
 const {name, gender} = obj; // name = "田中", gender = "man"
 ```
 
-といった柔軟なことができるが、Kotlinの分割宣言は上記のようなことができない。  
-あくまでも「プロパティの宣言順に値を取得できる機能」に過ぎないが、多少は便利かも？
+といった柔軟なことができるが、Kotlinの分割宣言は上記のようなことは出来ない。惜しい。
+
 
 ---
 class: middle
 
 ### Kotlinの特徴 - Data Class
 
-`copy`メソッドは、その名前の通りインスタンスのコピーを行うメソッド。
+〜`copy`〜
+
+その名前の通りインスタンスのコピーを行うメソッド。
 `copy`メソッドは一部のプロパティだけを変更したインスタンスを作成することができる。
 
 ```kt
@@ -357,27 +516,9 @@ class: middle
 2. 抽出したデータの一部を変更してUPDATE
 3. 1 のデータを使って後続の処理を実施
 
-といったケースに対して容易に対応できる。
-（Javaだと、手順2で新しくインスタンスを生成して、１つずつプロパティを詰め替える必要がある）
-
----
-class: middle
-
-### Kotlinの特徴 - Data Class
-
-ちなみに「データとして値を保持するためだけのクラス」の実装をKotlinとJavaで比較した場合、圧倒的にKotlinの方が記述量が少ないです。
-例えば、`User` という「ID」「名前」「年齢」を持つだけのクラスをJavaで定義すると約60行になります。
-
-[User.java - gist](https://gist.github.com/taka521/d03352edb8e5e05c3a48284cabb89042)
-
-上記と同様のクラスをKotlinのdata classで定義すると
-
-```kt
- data class User(val id: Long, val name: String, val age: Int)
-```
-
-1行で終わります。
-かつ、`componentN`や`copy`メソッドといった便利メソッドもおまけでついてきます。
+といったケースに対して容易に対応できる。  
+プロパティ数が多い場合、Javaだとインスタンスのコピーは面倒なので非常に有用なメソッド。  
+※特にimmutableなクラスだと尚更有用
 
 ---
 class: middle
@@ -408,6 +549,29 @@ class: middle
 class: middle
 
 ## まとめ
+
+* Java経験者の学習コストは低い
+* null安全やdata classなど、有用な機能が豊富
+* Kotlinはいいぞ
+
+---
+class: middle
+
+## Kotlinはいいぞ
+
+---
+class: middle, center
+
+## ご静聴、ありがとうございました
+
+質問があれば答えます！
+
+---
+class: middle
+
+## 参考
+
+
 
         </textarea>
         <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript"></script>
