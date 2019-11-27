@@ -9,3 +9,4 @@
 * [ラムダ式超入門](https://taka521.github.io/slides/java/lambda/lambda001.html#/)
 * [JavaDayTokyo2017レポート](https://taka521.github.io/slides/java/JavaDayTokyo2017/template.html#/)
 * [ジェネリクスの基本](https://taka521.github.io/slides/java/generics/description01.html)
+* [OAuth入門](https://taka521.github.io/slides/oauth/01_getting_started.html)
