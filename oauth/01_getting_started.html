@@ -145,6 +145,16 @@
       table tbody tr:nth-of-type(2n) {
         background: #f5f5f5;
       }
+
+      blockquote {
+        background-color: #EFEFEF;
+        text-align: left;
+      }
+
+      .black {
+        color: black
+      }
+
     </style>
   </head>
 
@@ -153,13 +163,14 @@
 class: center, middle
 # OAuth入門
 
-OpenID Connectもあるよ
+ボクとOAuthと、時々OpenID Connect
 
 ---
 class: middle
 
 ## 対象者
 
+エンジニア  
 OAuthを知らない人／名前は聞いたことある人
 
 
@@ -168,10 +179,14 @@ class: middle
 
 ## ゴール
 
-OAuthﾁｮｯﾄﾜｶﾙ
+「OAuth完全に理解した」
 
-OAuthの仕様を詳細に説明すると時間が足りないので、
+
+???
+
+詳細に話すと時間が足りないので、
 「何のためのものなのか」をざっくりと理解してもらうことが目的です
+
 
 ---
 class: middle
@@ -179,27 +194,113 @@ class: middle
 ## アジェンダ
 
 * OAuthとは
+  * OAuthとは何なのか
   * 認可と認証
 * OAuthの流れ
-  * アクセストークンが発行されるまで
-* OpenID Connectとの違い
 * まとめ
+* OpenID Connectとの違い
+
+???
+
+OpenIDについては時間があれば話す予定。
 
 ---
 class: middle
 
 ## OAuthとは
 
+
+???
+
+ではまず、OAuthとは何かについて。  
+とりあえず、この「何か」が分かっていれば今日は大丈夫。
+
+
 ---
 class: middle, center
 
-認可のためのプロトコル
+What's OAuth ?
+
+---
+class: middle
+
+OAuthは [RFC6749](https://openid-foundation-japan.github.io/rfc6749.ja.html) で標準化されている。
+
+<img src="./img/rfc6749.png" alt="RFC6749" width="100%" border="1">
 
 ???
-OAuthは認証のプロトコルと誤解されていることが多い印象。  
-理由）連携するときに認証を挟むから
 
-その前に、認可と認証についておさらい
+頭の部分に「OAuthとは？」の説明が書かれているので、抜き出してみる。
+
+---
+class: middle
+
+> OAuth 2.0 は, サードパーティーアプリケーションによる
+> HTTPサービスへの限定的なアクセスを可能にする認可フレームワークである.
+
+???
+
+ここでいう「フレームワーク」はSpringやLaravelのようなWEBフレームワークではなく、
+「手順」や「決まりごと」を指します。
+
+---
+class: middle, center
+
+# 🤔
+
+???
+
+うん、分からん。  
+これだけ聞いても何のイメージもわかない。  
+「へー、そうなんだ」ぐらいの感想。  
+
+他に簡潔で良い説明がないものか...
+Qiitaにありました
+
+---
+class: middle
+
+<img src="./img/qiita-f2a0d25a4f05790b3baa.png" alt="" width="100%">
+
+---
+class: middle
+
+> サービスのユーザーが、サービス上にホストされている自分のデータへのアクセスを、
+> 自分のクレデンシャルズ (ID & パスワード) を渡すことなく、
+> 第三者のアプリケーションに許可するためのフレームワークである。  
+
+<small style="font-size: 0.7em">
+  [OAuth 2.0 + OpenID Connect のフルスクラッチ実装者が知見を語る](https://qiita.com/TakahikoKawasaki/items/f2a0d25a4f05790b3baa#%E3%81%9D%E3%82%82%E3%81%9D%E3%82%82-oauth-%E3%81%AF%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B)より
+</small>
+
+
+???
+
+さっきよりかは分かりやすいと思います。
+
+RFCの説明には触れられていないが、とても大事なことが書かれています。
+
+どれか分かりますか？
+
+---
+class: middle
+
+> <span style="color:gray">サービスのユーザーが、サービス上にホストされている自分のデータへのアクセスを、</span>
+> 自分のクレデンシャルズ (ID & パスワード) を渡すことなく、
+> <span style="color:gray">第三者のアプリケーションに許可するためのフレームワークである。</span>
+
+<small style="font-size: 0.7em">
+  [OAuth 2.0 + OpenID Connect のフルスクラッチ実装者が知見を語る](https://qiita.com/TakahikoKawasaki/items/f2a0d25a4f05790b3baa#%E3%81%9D%E3%82%82%E3%81%9D%E3%82%82-oauth-%E3%81%AF%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B)より
+</small>
+
+
+???
+
+「自分のクレデンシャルを渡さない」
+
+これがOAuthでは大事。  
+どうやってアクセスを許可するのか。については、後ほど解説。
+
 
 ---
 class: middle, center
@@ -208,75 +309,131 @@ class: middle, center
 
 ???
 
-認可と認証の違い、把握してる？
+少し話は逸れて、認可と認証について話します。
+
+「何で？」と思うかもしれませんが、OAuthにおいては大切な要素。
+
+認可と認証の違い、ちゃんと把握してますか？
 
 ---
 class: middle
-
-## 認可と認証
 
 **認可**
 
-アクセスを許可すること。
+　権限を与えること。
 
 **認証**
 
-対象が何か・誰かを検証すること。
-
----
-class: middle, center
-
-OAuth は **アクセスを許可する** ためのプロトコル
-
-<small>⇒ 厳密には「アクセストークンを発行するプロトコル」</small>
-
+　対象が何か・誰かを検証すること。
 
 ???
 
+認可と認証の違いは理解しましたか？
 
----
-class: middle, center
-
-Q. じゃあ誰が何に対して、アクセスを許可するのか？
-
-???
-
-疑問に思わない？
+ここで先ほどの「OAuthとは何か」の説明に戻ってみましょう。
 
 ---
 class: middle
 
-### 本題はここから！
+> <span style="color: gray">サービスのユーザーが、サービス上にホストされている</span>自分のデータへのアクセスを、
+> <span style="color: gray">自分のクレデンシャルズ (ID & パスワード) を渡すことなく、
+> 第三者のアプリケーションに</span>許可するためのフレームワーク<span style="color: gray">である。</span>
+
+<small style="font-size: 0.7em">
+  [OAuth 2.0 + OpenID Connect のフルスクラッチ実装者が知見を語る](https://qiita.com/TakahikoKawasaki/items/f2a0d25a4f05790b3baa#%E3%81%9D%E3%82%82%E3%81%9D%E3%82%82-oauth-%E3%81%AF%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B)より
+</small>
 
 ???
 
-OAuthが「誰が、何に対してアクセスを許可するのか」を知ると、より理解できる。
-
+そう
 
 ---
 class: middle, center
 
-まずは、先程の疑問に対する回答を先に公開
+OAuthは認可のフレームワーク
+
+???
+
+OAuthは認可のフレームワークなのです。
+
+何で認可と認証の話をしたかというと、
+OAuthを「認証のフレームワーク」だと勘違いしている人がいるからです。  
+
+なぜか
+
 
 ---
 class: middle
 
-Q. じゃあ誰が何に対して、アクセスを許可するのか？
+* OAuthを使って 認証 することができるため
+  * OAuth認証と呼ばれるもの
+* アクセス許可要求時、ユーザ認証を求められるから。
 
-A. **リソースオーナー**が**クライアント**に対して、**リソース**へのアクセスを許可する。  
-リソースへのアクセスは、**認可サーバー**が発行した**アクセストークン**が必要となる。
+<center><img src="./img/twitter_auth.png" alt="" width="80%" border="1" ></center>
+
+???
+
+OAuthの仕様では認証については関与していない。
+
+あくまでも「認可のフレームワーク」であることを忘れないように。
+
+ちなみに、単なるOAuthを認証に利用すると「車が通れるほどの、どデカイセキュリティホールができる」らしいです。  
+
+
+一通り「OAuth」については説明しましたが、今はこう思っているはず。
+
+---
+class: middle
+
+「認可のフレームワーク」なのは分かった。  
+では、具体的な仕様を4行で教えてくれ。
+
+???
+
+これまでは概念的な話が主だったので、
+結局どうやって認可を実現するのかを話していない。
+
+4行でOAuthの仕様説明をするなら、こう。
+
+めっちゃ簡単です。
+
+---
+class: middle
+
+リソースへのアクセスはアクセストークンを用いる。
+アクセストークンは、リソースオーナーがクライアントに対して、要求された権限の委譲に許可した場合に認可サーバーが発行する。
 
 
 ---
 class: middle, center
 
-
-わっつ？？
+ね？簡単でしょう？
 
 ???
 
-今日の勉強会が終わった後、先程の回答が理解できることをゴールにしている。
+まぁ、そんなことはないんですけど。
 
+もう一度見てみましょう。
+
+次は大切な単語をピックアップしています。
+
+---
+class: middle
+
+<span style="color: gray">
+<span class="black">リソース</span>へのアクセスは<span class="black">アクセストークン</span>を用いる。
+アクセストークンは、<span class="black">ソースオーナー</span>が<span class="black">クライアント</span>に対して、要求された権限の委譲に許可した場合に<span class="black">認可サーバー</span>が発行する。
+</span>
+
+???
+
+新たに単語が5つ登場しました。
+
+リソース、アクセストークン、リソースオーナー、クライアント、認可サーバー
+
+これらを、OAuthの流れと共に説明していきます。
+
+最後にはこの文章が理解できているはずです！
 
 ---
 class: middle
@@ -284,9 +441,12 @@ class: middle
 ## OAuthの流れ
 
 ???
-
-最初に言った通り、OAuthは「アクセストークンを発行するプロトコル」。  
+ 
 実際にどういうフローで、アクセストークンが発行されるかをみていく。  
+
+HTTPでやりとりしていくが、今回はどのようなリクエスト・レスポンスでやりとりしているかは明言しません。
+
+今回は「流れ」を理解してもらうことを目的としているため。
 
 ---
 class: middle
@@ -302,6 +462,9 @@ class: middle
 
 ???
 
+先ほどは登場していなかった「認可コード」というものが増えていますが、今は気にしないでください。
+
+ちゃんと説明します。
 
 ---
 class: middle
@@ -440,6 +603,12 @@ class: middle, center
 
 <img src="./img/auth_code_grant/011.JPG" width="100%">
 
+???
+
+アクセストークンの発行はここまで。
+
+ここからはアクセストークンを使って、リソースへアクセスする。
+
 ---
 class: middle, center
 
@@ -455,6 +624,30 @@ class: middle, center
 
 <img src="./img/auth_code_grant/014.JPG" width="100%">
 
+???
+
+以上が、OAuthの流れになります。
+
+---
+class: middle
+
+どうですか？  
+なんとなく、流れが分かりましたか？
+
+???
+
+流れをみてきたので、、、
+
+---
+class: middle
+
+リソースへのアクセスはアクセストークンを用いる。
+アクセストークンは、リソースオーナーがクライアントに対して、要求された権限の委譲に許可した場合に認可サーバーが発行する。
+
+???
+
+この文章、わかりますよね？
+
 ---
 class: middle
 
@@ -466,21 +659,99 @@ class: middle
 ## アクセストークン発行フロー一覧
 
 * 認可コードフロー
+  * 認可コードフロー + PKCE
 * インプリシットフロー
 * リソースオーナー・パスワード・クレデンシャルズフロー
 * クライアント・クレデンシャルズフロー
 * リフレッシュトークンフロー
 
-興味があれば調べてみてね
+
+???
+
+PKCE（ピクシー）は仕様拡張。
+
+興味がある人は調べてみてください。
 
 ---
 class: middle
 
 ## まとめ
 
-* OAuthは「アクセストークン」を発行するプロトコル
+* OAuthは認可のフレームワーク
+* ID・PWを渡さずに、リソースへのアクセスを許可するための仕組み
+* リソースへのアクセスはアクセストークンを用いる
+* アクセストークンは権限委譲を許可した証
 
+---
+class: middle, center
 
+OAuth完全に理解しました？
+
+---
+class: middle
+
+## 参考
+
+* [The OAuth 2.0 Authorization Framework](https://openid-foundation-japan.github.io/rfc6749.ja.html)
+* [【電子版】雰囲気でOAuth2.0を使っているエンジニアがOAuth2.0を整理して、手を動かしながら学べる本 - Booth](https://booth.pm/ja/items/1296585)
+* [一番分かりやすい OAuth の説明 - Qiita](https://qiita.com/TakahikoKawasaki/items/e37caf50776e00e733be)
+* [OAuth 2.0 全フローの図解と動画 - Qiita](https://qiita.com/TakahikoKawasaki/items/200951e5b5929f840a1f)
+* [単なる OAuth 2.0 を認証に使うと、車が通れるほどのどでかいセキュリティー・ホールができる](https://www.sakimura.org/2012/02/1487/)
+
+---
+class: middle
+
+## OpenID Connectとの違い
+
+---
+class: middle
+
+OAuthが「認可のフレームワーク」であるのに対し、
+OpenID Connect は「認証のフレームワーク」
+
+---
+class: middle
+
+OAuthでは「アクセストークン」が発行されるが、
+OpenID Connect では「IDトークン」という認証情報が発行される。
+
+---
+class: middle
+
+OpenID Connectで「IDトークン」が発行される手順の種類は以下の通り。
+
+* 認可コードフロー
+* インプリシットフロー
+* ハイブリッドフロー
+
+???
+
+見たことありませんか？
+
+それもそのはず
+
+---
+class: middle
+
+OpenID ConnectはOAuthの拡張仕様
+
+???
+
+OAuthのフローを流用して、
+
+* IDトークンの発行
+* IDトークンの仕様
+
+を定めたものがOIDC
+
+---
+class: middle
+
+気になった人は調べてみてください。
+
+<img src="./img/booth_oidc.png" alt="" width="80%">
+
+[【電子版】OAuth、OAuth認証、OpenID Connectの違いを整理して理解できる本](https://booth.pm/ja/items/1550861)
 
 
     </textarea>
